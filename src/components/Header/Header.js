@@ -1,4 +1,5 @@
 import React from "react";
+import {NavLink, withRouter} from 'react-router-dom';
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -10,9 +11,10 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import CreateIcon from "@material-ui/icons/Create";
-import FavoriteIcon from "@material-ui/icons/Favorite";
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import MoreIcon from "@material-ui/icons/MoreVert";
-import { Button } from "@material-ui/core";
+import Divider from '@material-ui/core/Divider';
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles(theme => ({
   grow: {
@@ -23,7 +25,9 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     [theme.breakpoints.up("sm")]: {
       display: "block"
-    }
+    },
+    textDecoration: 'none',
+    cursor: 'pointer'
   },
 
   sectionDesktop: {
@@ -40,10 +44,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Header() {
+function Header({history}) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [authenticated, setAuthenticated] = React.useState(true);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -65,6 +70,16 @@ function Header() {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const handleSignIn = () => {
+    setAuthenticated(true)
+  }
+
+  const handleSignOut = () => {
+    setAuthenticated(false)
+    history.push("/");
+    handleMenuClose();
+  }
+
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -76,8 +91,10 @@ function Header() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem>Profile</MenuItem>
+      <MenuItem>My account</MenuItem>
+      <Divider />
+      <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
     </Menu>
   );
 
@@ -101,11 +118,12 @@ function Header() {
       <MenuItem>
         <IconButton color="inherit">
           <Badge badgeContent={11} color="primary">
-            <FavoriteIcon />
+            <FavoriteBorderIcon />
           </Badge>
         </IconButton>
         <p>Likes</p>
       </MenuItem>
+      
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           aria-label="account of current user"
@@ -116,65 +134,75 @@ function Header() {
           <AccountCircle />
         </IconButton>
         <p>Profile</p>
-      </MenuItem>
+      </MenuItem>    
     </Menu>
   );
 
   return (
-    <div style={{ marginBottom: '5%' }} className={classes.grow}>
+    <div style={{ marginBottom: '5em' }} className={classes.grow}>
       <AppBar color="transparent" position="static">
         <Toolbar>
-          <Typography
-            color="primary"
-            className={classes.title}
-            variant="h4"
-            noWrap
-          >
-            Eventure
-          </Typography>
+            <Typography
+              color="primary"
+              className={classes.title}
+              variant="h4"
+              noWrap
+              component={NavLink} to="/"
+            >
+              Eventure
+            </Typography>
 
           <div className={classes.grow} />
-          <div className={classes.sectionDesktop}>
-            <Button color="inherit">Browse Events</Button>
+
+          <Button color="inherit" component={NavLink} to="/events">Browse Events</Button>
+
+          <div className={classes.sectionDesktop}>          
+            {authenticated 
+              ? <>
+              <Button color="secondary" component={NavLink} to="/createEvent">Create Event</Button>
+              <Tooltip title="Likes">
+                <IconButton color="inherit" component={NavLink} to="/likes">
+                  <Badge badgeContent={7} color="primary">
+                    <FavoriteBorderIcon />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
+              <IconButton
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit">
+                  <AccountCircle />
+                </IconButton>
+              </>
+            : <Button color="primary" onClick={handleSignIn}>Sign In</Button> }
+
+          </div>
+
            
-            <Button color="secondary">Create Event</Button>
-
-            <Tooltip title="Likes">
-              <IconButton color="inherit">
-                <Badge badgeContent={7} color="primary">
-                  <FavoriteIcon />
-                </Badge>
-              </IconButton>
-            </Tooltip>
-
-            <IconButton
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-          </div>
           <div className={classes.sectionMobile}>
-            <IconButton
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
+            {authenticated  
+              ? <IconButton
+                  aria-label="show more"
+                  aria-controls={mobileMenuId}
+                  aria-haspopup="true"
+                  onClick={handleMobileMenuOpen}
+                  color="inherit"
+                >
+                  <MoreIcon />
+                </IconButton>
+              : <Button color="primary" onClick={handleSignIn}>Sign In</Button>}
           </div>
+                   
         </Toolbar>
       </AppBar>
+
       {renderMobileMenu}
       {renderMenu}
     </div>
   );
 }
 
-export default Header;
+export default withRouter(Header);

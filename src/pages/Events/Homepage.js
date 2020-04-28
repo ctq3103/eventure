@@ -3,17 +3,18 @@ import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import CharitySvg from "../components/SVG Components/CharitySvg";
-import EducationSvg from "../components/SVG Components/EducationSvg";
-import EntertainmentSvg from "../components/SVG Components/EntertainmentSvg";
-import FitnessSvg from "../components/SVG Components/FitnessSvg";
-import HobbySvg from "../components/SVG Components/HobbySvg";
-import BusinessSvg from "../components/SVG Components/BusinessSvg";
+import CharitySvg from "../../components/assets/CharitySvg";
+import EducationSvg from "../../components/assets/EducationSvg";
+import EntertainmentSvg from "../../components/assets/EntertainmentSvg";
+import FitnessSvg from "../../components/assets/FitnessSvg";
+import HobbySvg from "../../components/assets/HobbySvg";
+import BusinessSvg from "../../components/assets/BusinessSvg";
 
 
 const useStyles = makeStyles(theme => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
+    marginTop: '100px'
   },
   paper: {
     padding: theme.spacing(2),
@@ -38,17 +39,15 @@ export default function Homepage({history}) {
 
   return (
     <div className={classes.root}>
-      <Grid container>
-        <Grid item sm={1} />
+      <Grid container alignItems="center"
+          justify="center">
+        <Grid item xs={1} />
 
         <Grid
-          xs={12}
-          sm={10}
+          xs={10}
           item
           container
-          spacing={7}
-          alignItems="center"
-          justify="center"
+          spacing={7}     
         >
           <Grid item xs={12} sm={6} md={4}>
             <Paper elevation={0} className={classes.paper} onClick={() => history.push("/charity")}>
@@ -93,7 +92,7 @@ export default function Homepage({history}) {
           </Grid>
           
         </Grid>
-        <Grid item sm={1} />
+        <Grid item xs={1} />
       </Grid>
     </div>
   );
