@@ -41,7 +41,6 @@ export default function Homepage({history}) {
     <div className={classes.root}>
       <Grid container alignItems="center"
           justify="center">
-        <Grid item xs={1} />
 
         <Grid
           xs={10}
@@ -92,7 +91,6 @@ export default function Homepage({history}) {
           </Grid>
           
         </Grid>
-        <Grid item xs={1} />
       </Grid>
     </div>
   );

@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from 'react-redux';
 import {NavLink, withRouter} from 'react-router-dom';
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -15,12 +16,17 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import MoreIcon from "@material-ui/icons/MoreVert";
 import Divider from '@material-ui/core/Divider';
 import Button from "@material-ui/core/Button";
+import { openModal } from '../../redux/modals/modal.actions';
+
+const mapDispatchToProps = { openModal };
 
 const useStyles = makeStyles(theme => ({
   grow: {
     flexGrow: 1
   },
-
+  button: {
+    margin: theme.spacing(1),
+  },
   title: {
     display: "flex",
     [theme.breakpoints.up("sm")]: {
@@ -44,7 +50,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Header({history}) {
+function Header({history, openModal}) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -71,7 +77,11 @@ function Header({history}) {
   };
 
   const handleSignIn = () => {
-    setAuthenticated(true)
+    openModal('SignInModal')
+  }
+
+  const handleRegister = () => {
+    openModal('RegisterModal')
   }
 
   const handleSignOut = () => {
@@ -109,37 +119,44 @@ function Header({history}) {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
-        <IconButton color="inherit">
-          <CreateIcon />
-        </IconButton>
-        <p>Create Event</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton color="inherit">
-          <Badge badgeContent={11} color="primary">
-            <FavoriteBorderIcon />
-          </Badge>
-        </IconButton>
-        <p>Likes</p>
-      </MenuItem>
-      
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
-      </MenuItem>    
+      {authenticated 
+        ? <>
+          <MenuItem>
+          <IconButton color="inherit">
+            <CreateIcon />
+          </IconButton>
+          <p>Create Event</p>
+        </MenuItem>
+        <MenuItem>
+          <IconButton color="inherit">
+            <Badge badgeContent={11} color="primary">
+              <FavoriteBorderIcon />
+            </Badge>
+          </IconButton>
+          <p>Likes</p>
+        </MenuItem>
+        
+        <MenuItem onClick={handleProfileMenuOpen}>
+          <IconButton
+            aria-label="account of current user"
+            aria-controls="primary-search-account-menu"
+            aria-haspopup="true"
+            color="inherit"
+          >
+            <AccountCircle />
+          </IconButton>
+          <p>Profile</p>
+        </MenuItem> 
+        </>
+        :  <>
+            <MenuItem><Button color="inherit" onClick={handleSignIn}>Sign In</Button></MenuItem>
+            <MenuItem><Button color="inherit" onClick={handleRegister}>Register</Button></MenuItem>
+          </> }  
     </Menu>
   );
 
   return (
-    <div style={{ marginBottom: '5em' }} className={classes.grow}>
+    <div style={{ marginBottom: '2em' }} className={classes.grow}>
       <AppBar color="transparent" position="static">
         <Toolbar>
             <Typography
@@ -177,14 +194,16 @@ function Header({history}) {
                   <AccountCircle />
                 </IconButton>
               </>
-            : <Button color="primary" onClick={handleSignIn}>Sign In</Button> }
+            : <>
+                <Button className={classes.button} variant="outlined"color="primary" onClick={handleSignIn}>Sign In</Button>
+                <Button className={classes.button} variant="outlined" color="secondary" onClick={handleRegister}>Register</Button>
+              </> }
 
           </div>
 
            
           <div className={classes.sectionMobile}>
-            {authenticated  
-              ? <IconButton
+              <IconButton
                   aria-label="show more"
                   aria-controls={mobileMenuId}
                   aria-haspopup="true"
@@ -193,7 +212,6 @@ function Header({history}) {
                 >
                   <MoreIcon />
                 </IconButton>
-              : <Button color="primary" onClick={handleSignIn}>Sign In</Button>}
           </div>
                    
         </Toolbar>
@@ -205,4 +223,4 @@ function Header({history}) {
   );
 }
 
-export default withRouter(Header);
+export default withRouter((connect(null, mapDispatchToProps))(Header));

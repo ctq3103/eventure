@@ -5,6 +5,7 @@ import { Switch, Route } from 'react-router-dom';
 import Header from "./components/Header/Header";
 import Homepage from "./pages/Events/Homepage";
 import BrowseEvents from "./pages/Events/BrowseEvents";
+import ModalManager from "./components/modal/modal.manager";
 
 const theme = createMuiTheme({
   palette: {
@@ -26,6 +27,7 @@ const theme = createMuiTheme({
 export default function App() {
   return (
       <ThemeProvider theme={theme}>
+        <ModalManager />
         <Header />
         <Switch>
           <Route exact path="/" component={Homepage} />
