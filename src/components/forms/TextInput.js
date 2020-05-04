@@ -1,21 +1,37 @@
-import React from 'react'
-import { TextField } from '@material-ui/core'
+import React from 'react';
+import { TextField, Typography } from '@material-ui/core';
 
-const TextInput = ({ input, id, name, label, helperText, meta: {touched, error}, ...rest}) => {
-    return (
-        <TextField
-            {...input}
-            id={id}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            label={label}
-            name={name}
-            autoFocus
-            error={touched && !!error}
-            helperText={touched && !!error && helperText}
-          />
-    )
-}
+const TextInput = ({
+	input,
+	id,
+	name,
+	label,
+	helperText,
+	type,
+	meta: { touched, error },
+	...rest
+}) => {
+	return (
+		<div>
+			<TextField
+				{...input}
+				id={id}
+				variant="outlined"
+				margin="normal"
+				fullWidth
+				label={label}
+				name={name}
+				type={type}
+				error={touched && !!error}
+				helperText={touched && !!error && helperText}
+			/>
+			{touched && error && (
+				<Typography variant="subtitle2" color="primary">
+					{error}
+				</Typography>
+			)}
+		</div>
+	);
+};
 
 export default TextInput;
