@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,16 +13,15 @@ import TextInput from '../forms/TextInput';
 import { Field, reduxForm } from 'redux-form';
 import { registerStart } from '../../redux/auth/auth.actions';
 import { combineValidators, isRequired } from 'revalidate';
+import { selectAuthError } from '../../redux/auth/auth.selectors';
 
 const mapDispatchToProps = {
 	registerStart,
 };
 
-const mapStateToProps = (state) => {
-	return {
-		auth: state.auth,
-	};
-};
+const mapStateToProps = createStructuredSelector({
+	authError: selectAuthError,
+});
 
 const validate = combineValidators({
 	displayName: isRequired('Name'),
@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
 function RegisterForm({
 	handleSubmit,
 	registerStart,
-	auth,
+	authError,
 	invalid,
 	submitting,
 }) {
@@ -117,9 +117,9 @@ function RegisterForm({
 							/>
 						</Grid> */}
 					</Grid>
-					{auth.error && (
+					{authError && (
 						<Typography variant="subtitle2" color="primary">
-							{auth.error.message}
+							{authError.message}
 						</Typography>
 					)}
 					<Button

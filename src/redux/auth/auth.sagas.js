@@ -59,6 +59,7 @@ export function* onRegisterStart() {
 }
 
 export function* socialSignIn({ payload: selectedProvider }) {
+	yield put(closeModal());
 	try {
 		let authProvider;
 		if (selectedProvider === 'google') {

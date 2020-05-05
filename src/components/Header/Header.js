@@ -9,20 +9,15 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import Badge from '@material-ui/core/Badge';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import CreateIcon from '@material-ui/icons/Create';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import { openModal } from '../../redux/modals/modal.actions';
-
-const mapDispatchToProps = {
-	openModal,
-};
+import FavoriteIconNav from './FavoriteIconNav';
 
 const mapStateToProps = (state) => ({
 	auth: state.firebase.auth,
@@ -58,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-function Header({ history, openModal, auth, signOutStart }) {
+function Header({ history, auth, dispatch }) {
 	const firebase = useFirebase();
 	const authenticated = auth.isLoaded && !auth.isEmpty;
 
@@ -87,11 +82,11 @@ function Header({ history, openModal, auth, signOutStart }) {
 	};
 
 	const handleSignIn = () => {
-		openModal('SignInModal');
+		dispatch(openModal('SignInModal'));
 	};
 
 	const handleRegister = () => {
-		openModal('RegisterModal');
+		dispatch(openModal('RegisterModal'));
 	};
 
 	const handleSignOut = () => {
@@ -139,11 +134,9 @@ function Header({ history, openModal, auth, signOutStart }) {
 					</MenuItem>
 					<MenuItem>
 						<IconButton color="inherit">
-							<Badge badgeContent={11} color="primary">
-								<FavoriteBorderIcon />
-							</Badge>
+							<FavoriteIconNav />
 						</IconButton>
-						<p>Likes</p>
+						<p>Favorites</p>
 					</MenuItem>
 
 					<MenuItem onClick={handleProfileMenuOpen}>
@@ -203,11 +196,13 @@ function Header({ history, openModal, auth, signOutStart }) {
 								<Button color="secondary" component={NavLink} to="/createEvent">
 									Create Event
 								</Button>
-								<Tooltip title="Likes">
-									<IconButton color="inherit" component={NavLink} to="/likes">
-										<Badge badgeContent={7} color="primary">
-											<FavoriteBorderIcon />
-										</Badge>
+								<Tooltip title="Favorites">
+									<IconButton
+										color="inherit"
+										component={NavLink}
+										to="/favorites"
+									>
+										<FavoriteIconNav />
 									</IconButton>
 								</Tooltip>
 								<IconButton
@@ -264,4 +259,4 @@ function Header({ history, openModal, auth, signOutStart }) {
 	);
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));
+export default withRouter(connect(mapStateToProps)(Header));

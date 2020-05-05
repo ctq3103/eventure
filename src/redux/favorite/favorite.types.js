@@ -1,0 +1,2 @@
+export const TOGGLE_ADD_FAV_ITEM = 'TOGGLE_ADD_FAV_ITEM';
+export const CLEAR_FAV_ITEM = 'CLEAR_FAV_ITEM';

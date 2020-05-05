@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -18,17 +19,16 @@ import { Grid, Divider } from '@material-ui/core';
 import { combineValidators, isRequired } from 'revalidate';
 import { indigo, red } from '@material-ui/core/colors';
 import SocialSignInForm from './SocialSignInForm';
+import { selectAuthError } from '../../redux/auth/auth.selectors';
 
 const mapDispatchToProps = {
 	emailSignInStart,
 	socialSignInStart,
 };
 
-const mapStateToProps = (state) => {
-	return {
-		auth: state.auth,
-	};
-};
+const mapStateToProps = createStructuredSelector({
+	authError: selectAuthError,
+});
 
 const validate = combineValidators({
 	email: isRequired('Email'),
@@ -75,12 +75,11 @@ function SignInForm({
 	emailSignInStart,
 	socialSignInStart,
 	handleSubmit,
-	auth,
+	authError,
 	invalid,
 	submitting,
 }) {
 	const classes = useStyles();
-	console.log(auth.error);
 
 	return (
 		<Container component="main" maxWidth="xs">
@@ -120,9 +119,9 @@ function SignInForm({
 							/>
 						</Grid>
 					</Grid>
-					{auth.error && (
+					{authError && (
 						<Typography variant="subtitle2" color="primary">
-							{auth.error.message}
+							{authError.message}
 						</Typography>
 					)}
 					<Button

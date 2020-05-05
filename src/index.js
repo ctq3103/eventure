@@ -3,9 +3,10 @@ import ReactDOM from 'react-dom';
 import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 import ReduxToastr from 'react-redux-toastr';
 import App from './App';
-import { store } from './redux/store';
+import { store, persistor } from './redux/store';
 
 import { ReactReduxFirebaseProvider } from 'react-redux-firebase';
 import { createFirestoreInstance } from 'redux-firestore';
@@ -40,7 +41,9 @@ ReactDOM.render(
 					progressBar
 					closeOnToastrClick
 				/>
-				<App />
+				<PersistGate persistor={persistor}>
+					<App />
+				</PersistGate>
 			</ReactReduxFirebaseProvider>
 		</BrowserRouter>
 	</Provider>,
