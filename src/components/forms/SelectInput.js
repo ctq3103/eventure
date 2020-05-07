@@ -1,17 +1,9 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { FormHelperText } from '@material-ui/core';
-
-const useStyles = makeStyles((theme) => ({
-	formControl: {
-		margin: theme.spacing(1),
-		minWidth: 120,
-	},
-}));
 
 const SelectInput = ({
 	input,
@@ -19,26 +11,28 @@ const SelectInput = ({
 	name,
 	label,
 	meta: { touched, error },
-	...rest
 }) => {
-	const classes = useStyles();
+	const [category, setCategory] = React.useState('');
+
+	const handleChange = (event) => {
+		setCategory(event.target.value);
+	};
 
 	return (
 		<div>
-			<FormControl
-				variant="outlined"
-				className={classes.formControl}
-				error={touched && !!error}
-			>
+			<FormControl fullWidth variant="outlined" error={touched && !!error}>
 				<InputLabel id="select-input">{label}</InputLabel>
 				<Select
 					labelId="select-input"
-					value={input.value}
-					onChange={(e, data) => input.onChange(data.value)}
+					//input={<Input />}
+					value={category}
+					onChange={handleChange}
 					label={label}
 				>
 					{options.map((option) => (
-						<MenuItem value={option.key}>{option.text}</MenuItem>
+						<MenuItem key={option.key} value={option.value}>
+							{option.text}
+						</MenuItem>
 					))}
 				</Select>
 			</FormControl>

@@ -26,6 +26,7 @@ const mapStateToProps = (state) => ({
 const useStyles = makeStyles((theme) => ({
 	grow: {
 		flexGrow: 1,
+		color: theme.palette.text.primary,
 	},
 	button: {
 		margin: theme.spacing(1),
@@ -181,12 +182,12 @@ function Header({ history, auth, dispatch }) {
 						component={NavLink}
 						to="/"
 					>
-						Eventure
+						eventure
 					</Typography>
 
 					<div className={classes.grow} />
 
-					<Button color="inherit" component={NavLink} to="/events">
+					<Button color="inherit" component={NavLink} exact to="/events">
 						Browse Events
 					</Button>
 
@@ -200,6 +201,7 @@ function Header({ history, auth, dispatch }) {
 									<IconButton
 										color="inherit"
 										component={NavLink}
+										exact
 										to="/favorites"
 									>
 										<FavoriteIconNav />

@@ -8,8 +8,9 @@ const TextInput = ({
 	label,
 	helperText,
 	type,
+	multiline,
+	rowsMax,
 	meta: { touched, error },
-	...rest
 }) => {
 	return (
 		<div>
@@ -22,6 +23,8 @@ const TextInput = ({
 				label={label}
 				name={name}
 				type={type}
+				multiline={multiline}
+				rowsMax={rowsMax}
 				error={touched && !!error}
 				helperText={touched && !!error && helperText}
 			/>
