@@ -1,47 +1,25 @@
+import React, { useState } from 'react';
 import 'date-fns';
-import React from 'react';
-import Grid from '@material-ui/core/Grid';
+import { DateTimePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-import {
-	MuiPickersUtilsProvider,
-	KeyboardTimePicker,
-	KeyboardDatePicker,
-} from '@material-ui/pickers';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 
-const DateTimePicker = () => {
-	const [selectedDate, setSelectedDate] = React.useState(new Date());
-
-	const handleDateChange = (date) => {
-		setSelectedDate(date);
-	};
+const DateTime = ({ input, ...rest }) => {
+	const [selectedDate, handleDateChange] = useState(new Date());
 
 	return (
 		<MuiPickersUtilsProvider utils={DateFnsUtils}>
-			<Grid container justify="space-around">
-				<KeyboardDatePicker
-					fullWidth
-					margin="normal"
-					label="Choose Date"
-					format="MM/dd/yyyy"
-					value={selectedDate}
-					onChange={handleDateChange}
-					KeyboardButtonProps={{
-						'aria-label': 'change date',
-					}}
-				/>
-				<KeyboardTimePicker
-					fullWidth
-					margin="normal"
-					label="Choose Time"
-					value={selectedDate}
-					onChange={handleDateChange}
-					KeyboardButtonProps={{
-						'aria-label': 'change time',
-					}}
-				/>
-			</Grid>
+			<DateTimePicker
+				disablePast
+				fullWidth
+				format="MM LLL yyyy h:mm a"
+				label="Date and Time"
+				inputVariant="outlined"
+				value={selectedDate}
+				onChange={handleDateChange}
+			/>
 		</MuiPickersUtilsProvider>
 	);
 };
 
-export default DateTimePicker;
+export default DateTime;

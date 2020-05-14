@@ -6,6 +6,9 @@ import {
 	REGISTER_START,
 	REGISTER_SUCCESS,
 	REGISTER_FAILURE,
+	UPDATE_PASSWORD_START,
+	UPDATE_PASSWORD_SUCCESS,
+	UPDATE_PASSWORD_FAILURE,
 } from './auth.types';
 
 export const emailSignInStart = (user) => ({
@@ -49,6 +52,27 @@ export const registerSuccess = (user) => {
 export const registerFailure = (error) => {
 	return {
 		type: REGISTER_FAILURE,
+		payload: error,
+	};
+};
+
+export const updatePasswordStart = (user) => {
+	return {
+		type: UPDATE_PASSWORD_START,
+		payload: user,
+	};
+};
+
+export const updatePasswordSuccess = (user) => {
+	return {
+		type: UPDATE_PASSWORD_SUCCESS,
+		payload: user,
+	};
+};
+
+export const updatePasswordFailure = (error) => {
+	return {
+		type: UPDATE_PASSWORD_FAILURE,
 		payload: error,
 	};
 };

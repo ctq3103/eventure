@@ -3,12 +3,14 @@ import {
 	SIGN_IN_FAILURE,
 	REGISTER_SUCCESS,
 	REGISTER_FAILURE,
+	UPDATE_PASSWORD_FAILURE,
 } from './auth.types';
 
 const INITIAL_STATE = {
 	authenticated: false,
 	currentUser: null,
 	error: null,
+	accError: null,
 };
 
 export const authReducer = (state = INITIAL_STATE, action) => {
@@ -26,6 +28,12 @@ export const authReducer = (state = INITIAL_STATE, action) => {
 				...state,
 				error: action.payload,
 			};
+		case UPDATE_PASSWORD_FAILURE:
+			return {
+				...state,
+				accError: action.payload,
+			};
+
 		default:
 			return state;
 	}

@@ -90,7 +90,11 @@ const EventDetailInfo = ({ children, event }) => {
 					{attendees && (
 						<AvatarGroup max={8}>
 							{attendees.map((attendee) => (
-								<Avatar alt={attendee.name} src={attendee.photoURL} />
+								<Avatar
+									key={attendee.id}
+									alt={attendee.name}
+									src={attendee.photoURL}
+								/>
 							))}
 						</AvatarGroup>
 					)}

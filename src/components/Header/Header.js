@@ -18,9 +18,11 @@ import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import { openModal } from '../../redux/modals/modal.actions';
 import FavoriteIconNav from './FavoriteIconNav';
+import { Avatar } from '@material-ui/core';
 
 const mapStateToProps = (state) => ({
 	auth: state.firebase.auth,
+	profile: state.firebase.profile,
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -54,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-function Header({ history, auth, dispatch }) {
+function Header({ history, auth, profile, dispatch }) {
 	const firebase = useFirebase();
 	const authenticated = auth.isLoaded && !auth.isEmpty;
 
@@ -108,7 +110,9 @@ function Header({ history, auth, dispatch }) {
 			onClose={handleMenuClose}
 		>
 			<MenuItem>Profile</MenuItem>
-			<MenuItem>My account</MenuItem>
+			<MenuItem component={NavLink} exact to="/settings">
+				Settings
+			</MenuItem>
 			<Divider />
 			<MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
 		</Menu>
@@ -147,10 +151,13 @@ function Header({ history, auth, dispatch }) {
 							aria-haspopup="true"
 							color="inherit"
 						>
-							<AccountCircle />
-							<Typography variant="h6">{auth.email}</Typography>
+							{profile.photoURL ? (
+								<Avatar alt={profile.displayName} src={profile.photoURL} />
+							) : (
+								<AccountCircle />
+							)}
 						</Button>
-						<p>Profile</p>
+						<p> Profile</p>
 					</MenuItem>
 				</div>
 			) : (
@@ -194,7 +201,12 @@ function Header({ history, auth, dispatch }) {
 					<div className={classes.sectionDesktop}>
 						{authenticated ? (
 							<div>
-								<Button color="secondary" component={NavLink} to="/createEvent">
+								<Button
+									variant="outlined"
+									color="secondary"
+									component={NavLink}
+									to="/createEvent"
+								>
 									Create Event
 								</Button>
 								<Tooltip title="Favorites">
@@ -207,6 +219,7 @@ function Header({ history, auth, dispatch }) {
 										<FavoriteIconNav />
 									</IconButton>
 								</Tooltip>
+
 								<IconButton
 									edge="end"
 									aria-label="account of current user"
@@ -215,8 +228,11 @@ function Header({ history, auth, dispatch }) {
 									onClick={handleProfileMenuOpen}
 									color="inherit"
 								>
-									<AccountCircle />
-									<Typography variant="h6">{auth.email}</Typography>
+									{profile.photoURL ? (
+										<Avatar alt={profile.displayName} src={profile.photoURL} />
+									) : (
+										<AccountCircle />
+									)}
 								</IconButton>
 							</div>
 						) : (

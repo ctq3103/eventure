@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { createEvent, updateEvent } from '../../redux/events/events.actions';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -18,11 +19,10 @@ import {
 	composeValidators,
 	hasLengthGreaterThan,
 } from 'revalidate';
-import DateTimePicker from '../forms/DateTimePicker';
+import DateTime from '../forms/DateTimePicker';
 
 const validate = combineValidators({
 	title: isRequired({ message: 'Event Title is required' }),
-	category: isRequired({ message: 'Category is required' }),
 	description: composeValidators(
 		isRequired({ message: 'Description is required' }),
 		hasLengthGreaterThan(10)({
@@ -30,7 +30,6 @@ const validate = combineValidators({
 		})
 	)(),
 	venue: isRequired({ message: 'Event Venue is required' }),
-	dateTime: isRequired('DateTime'),
 });
 
 const categories = [
@@ -65,8 +64,11 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const EventForm = ({ invalid, submitting, pristine }) => {
+const EventForm = ({ invalid, submitting, pristine, initialValues }) => {
 	const classes = useStyles();
+	// console.log(initialValues);
+	// const [eventManage] = useState(event);
+	//const { title, venue, description, category } = initialValues;
 
 	return (
 		<Container component="main" maxWidth="xs">
@@ -76,7 +78,7 @@ const EventForm = ({ invalid, submitting, pristine }) => {
 					<CreateIcon />
 				</Avatar>
 				<Typography component="h1" variant="h5">
-					Create event
+					Event Form
 				</Typography>
 				<form className={classes.form} autoComplete="off">
 					<Grid container spacing={2}>
@@ -88,6 +90,7 @@ const EventForm = ({ invalid, submitting, pristine }) => {
 								label="Event Title"
 								name="title"
 								autoFocus
+								//defaultValue={title}
 							/>
 						</Grid>
 
@@ -100,6 +103,7 @@ const EventForm = ({ invalid, submitting, pristine }) => {
 								label="Event Category"
 								type="category"
 								id="category"
+								//defaultValue={category}
 							/>
 						</Grid>
 
@@ -113,12 +117,13 @@ const EventForm = ({ invalid, submitting, pristine }) => {
 								id="description"
 								multiline
 								rowsMax={50}
+								//defaultValue={description}
 							/>
 						</Grid>
 
 						<Grid item xs={12}>
 							<Field
-								component={DateTimePicker}
+								component={DateTime}
 								required
 								name="dateTime"
 								label="Date & Time"
@@ -130,12 +135,12 @@ const EventForm = ({ invalid, submitting, pristine }) => {
 						<Grid item xs={12}>
 							<Field
 								component={TextInput}
-								options={categories}
 								required
 								name="venue"
 								label="Venue"
 								type="venue"
 								id="venue"
+								//defaultValue={venue}
 							/>
 						</Grid>
 					</Grid>
@@ -154,13 +159,45 @@ const EventForm = ({ invalid, submitting, pristine }) => {
 					>
 						Submit
 					</Button>
+					<Button
+						disabled={invalid || submitting}
+						type="submit"
+						fullWidth
+						variant="contained"
+						color="primary"
+						className={classes.submit}
+					>
+						Update
+					</Button>
 				</form>
 			</div>
 		</Container>
 	);
 };
 
+const mapDispatchToProps = {
+	createEvent,
+	updateEvent,
+};
+
+const mapStateToProps = (state, ownProps) => {
+	const eventId = ownProps.match.params.id;
+
+	let event;
+
+	if (eventId && state.events.length > 0) {
+		event = state.events.filter((event) => event.id === eventId)[0];
+	}
+	return {
+		initialValues: event,
+	};
+};
+
 export default connect(
-	null,
-	null
-)(reduxForm({ form: 'createEventForm', validate })(EventForm));
+	mapStateToProps,
+	mapDispatchToProps
+)(
+	reduxForm({ form: 'EventForm', validate, enableReinitialize: true })(
+		EventForm
+	)
+);

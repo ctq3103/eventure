@@ -9,8 +9,8 @@ const useStyles = makeStyles((theme) => ({
 		color: theme.palette.text.secondary,
 	},
 	typography: {
-		marginBottom: '1em',
-		marginTop: '1em',
+		marginBottom: theme.spacing(3),
+		marginTop: theme.spacing(3),
 	},
 }));
 

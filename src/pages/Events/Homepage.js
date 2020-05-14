@@ -13,7 +13,7 @@ import BusinessSvg from '../../components/assets/BusinessSvg';
 const useStyles = makeStyles((theme) => ({
 	root: {
 		flexGrow: 1,
-		margin: '100px',
+		margin: theme.spacing(12),
 	},
 	paper: {
 		padding: theme.spacing(2),

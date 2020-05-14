@@ -3,13 +3,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Typography } from '@material-ui/core';
 // import EventItem from './EventItem';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
 	root: {
 		flexGrow: 1,
 	},
 	typography: {
-		marginBottom: '1em',
-		marginTop: '1em',
+		marginBottom: theme.spacing(5),
+		marginTop: theme.spacing(5),
 	},
 }));
 

@@ -1,17 +1,22 @@
 import { takeLatest, put, all, call } from 'redux-saga/effects';
 import { reduxSagaFirebase } from '../../config/firebase';
+import { reset } from 'redux-form';
 import firebase from '../../config/firebase';
+import { toastr } from 'react-redux-toastr';
 import { closeModal } from '../modals/modal.actions';
 import {
 	EMAIL_SIGN_IN_START,
 	REGISTER_START,
 	SOCIAL_SIGN_IN_START,
+	UPDATE_PASSWORD_START,
 } from './auth.types';
 import {
 	signInFailure,
 	registerFailure,
 	signInSuccess,
 	registerSuccess,
+	updatePasswordSuccess,
+	updatePasswordFailure,
 } from './auth.actions';
 
 export function* signInWithEmail({ payload: { email, password } }) {
@@ -70,14 +75,21 @@ export function* socialSignIn({ payload: selectedProvider }) {
 			authProvider = facebookProvider;
 		}
 		const data = yield firebase.auth().signInWithPopup(authProvider);
-		const { user } = data;
-		//set user doc on firestore
-		yield call(reduxSagaFirebase.firestore.setDocument, `users/${user.uid}`, {
-			displayName: user.displayName,
-			email: user.email,
-			photoUrl: user.photoURL,
-			createdAt: new Date(),
-		});
+		const {
+			user,
+			additionalUserInfo: { isNewUser },
+		} = data;
+
+		if (isNewUser) {
+			//set user doc on firestore
+			yield call(reduxSagaFirebase.firestore.setDocument, `users/${user.uid}`, {
+				displayName: user.displayName,
+				email: user.email,
+				photoURL: user.photoURL,
+				createdAt: new Date(),
+			});
+		}
+
 		yield put(signInSuccess(user));
 	} catch (error) {
 		yield put(signInFailure(error));
@@ -88,10 +100,27 @@ export function* onSocialSignInStart() {
 	yield takeLatest(SOCIAL_SIGN_IN_START, socialSignIn);
 }
 
+export function* updatePassword({ payload: user }) {
+	try {
+		yield call(reduxSagaFirebase.auth.updatePassword, user.password);
+
+		toastr.success('Success', 'Your password has been updated');
+		yield put(updatePasswordSuccess(user));
+		yield put(reset('account'));
+	} catch (error) {
+		yield put(updatePasswordFailure(error));
+	}
+}
+
+export function* onUpdatePasswordStart() {
+	yield takeLatest(UPDATE_PASSWORD_START, updatePassword);
+}
+
 export function* authSagas() {
 	yield all([
 		call(onEmailSignInStart),
 		call(onRegisterStart),
 		call(onSocialSignInStart),
+		call(onUpdatePasswordStart),
 	]);
 }

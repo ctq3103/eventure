@@ -9,12 +9,12 @@ import { selectFavItems } from '../../redux/favorite/favorite.selectors';
 const useStyles = makeStyles((theme) => ({
 	root: {
 		flexGrow: 1,
-		margin: '60px',
+		margin: theme.spacing(5),
 	},
 
 	typography: {
-		marginBottom: '1em',
-		marginTop: '1em',
+		marginBottom: theme.spacing(4),
+		marginTop: theme.spacing(4),
 	},
 }));
 

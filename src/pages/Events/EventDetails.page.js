@@ -8,7 +8,7 @@ import EventDetailBtn from '../../components/Events/EventDetailBtn';
 const useStyles = makeStyles((theme) => ({
 	root: {
 		flexGrow: 1,
-		margin: '50px',
+		margin: theme.spacing(5),
 	},
 	paper: {
 		textAlign: 'left',
@@ -18,7 +18,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const mapStateToProps = (state, ownProps) => {
-	console.log(ownProps);
 	const eventId = ownProps.match.params.id;
 	let event = {};
 
@@ -26,17 +25,12 @@ const mapStateToProps = (state, ownProps) => {
 		event = state.events.filter((event) => event.id === eventId)[0];
 	}
 
-	console.log(event);
-
 	return {
 		event: event,
 	};
-
-	//.filter((event) => event.id === eventId
 };
 
 const EventDetailPage = ({ event }) => {
-	console.log(event);
 	const classes = useStyles();
 	return (
 		<div className={classes.root}>

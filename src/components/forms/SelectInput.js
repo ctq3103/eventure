@@ -10,6 +10,7 @@ const SelectInput = ({
 	options,
 	name,
 	label,
+	defaultValue,
 	meta: { touched, error },
 }) => {
 	const [category, setCategory] = React.useState('');
@@ -28,7 +29,11 @@ const SelectInput = ({
 					value={category}
 					onChange={handleChange}
 					label={label}
+					defaultValue={defaultValue}
 				>
+					<MenuItem selected disabled value="">
+						<em>Please choose one</em>
+					</MenuItem>
 					{options.map((option) => (
 						<MenuItem key={option.key} value={option.value}>
 							{option.text}

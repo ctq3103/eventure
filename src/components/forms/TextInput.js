@@ -8,12 +8,13 @@ const TextInput = ({
 	label,
 	helperText,
 	type,
+	defaultValue,
 	multiline,
 	rowsMax,
 	meta: { touched, error },
 }) => {
 	return (
-		<div>
+		<>
 			<TextField
 				{...input}
 				id={id}
@@ -23,6 +24,7 @@ const TextInput = ({
 				label={label}
 				name={name}
 				type={type}
+				defaultValue={defaultValue}
 				multiline={multiline}
 				rowsMax={rowsMax}
 				error={touched && !!error}
@@ -33,7 +35,7 @@ const TextInput = ({
 					{error}
 				</Typography>
 			)}
-		</div>
+		</>
 	);
 };
 
