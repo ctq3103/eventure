@@ -1,25 +1,44 @@
-import React, { useState } from 'react';
+import React from 'react';
 import 'date-fns';
 import { DateTimePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 
-const DateTime = ({ input, ...rest }) => {
-	const [selectedDate, handleDateChange] = useState(new Date());
+const DateTimeInput = (props) => {
+	const {
+		meta: { submitting, error, touched },
+		input: { onBlur, value, ...inputProps },
+		...others
+	} = props;
+
+	const onChange = (date) => {
+		Date.parse(date)
+			? inputProps.onChange(date.toISOString())
+			: inputProps.onChange(null);
+	};
 
 	return (
 		<MuiPickersUtilsProvider utils={DateFnsUtils}>
 			<DateTimePicker
-				disablePast
+				{...inputProps}
+				{...others}
+				autoOk
 				fullWidth
-				format="MM LLL yyyy h:mm a"
-				label="Date and Time"
+				label="Choose Date and Time"
 				inputVariant="outlined"
-				value={selectedDate}
-				onChange={handleDateChange}
+				format="dd LLLL yyyy, h:mm aaa OOO"
+				value={value ? new Date(value) : new Date()}
+				disabled={submitting}
+				onBlur={() =>
+					onBlur(
+						value ? new Date(value).toISOString() : new Date().toISOString()
+					)
+				}
+				error={error && touched}
+				onChange={onChange}
 			/>
 		</MuiPickersUtilsProvider>
 	);
 };
 
-export default DateTime;
+export default DateTimeInput;

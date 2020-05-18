@@ -57,7 +57,7 @@ const PersonalInfo = ({
 					id="birthday"
 					component={DateInput}
 					name="birthday"
-					label="Birthday"
+					placeholder="01 Jan 2002"
 					maxDate={addYears(new Date(), -18)}
 				/>
 

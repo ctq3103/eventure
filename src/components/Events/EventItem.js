@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-
+import { format } from 'date-fns';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -12,13 +12,16 @@ import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 import LaunchIcon from '@material-ui/icons/Launch';
 import DeleteIcon from '@material-ui/icons/Delete';
-import FavIconEvent from './FavoriteIcon.EventPage';
-import { Grid } from '@material-ui/core';
+import FavIcon from './FavIcon';
+import Grid from '@material-ui/core/Grid';
 import { deleteEvent } from '../../redux/events/events.actions';
 
 const useStyles = makeStyles(() => ({
 	root: {
 		maxWidth: 350,
+	},
+	mediaWrapper: {
+		backgroundColor: '#f7f1e3',
 	},
 	media: {
 		height: 0,
@@ -32,14 +35,23 @@ const useStyles = makeStyles(() => ({
 
 const EventItem = ({ event, deleteEvent, history, match }) => {
 	const classes = useStyles();
-	const { title, date, imageUrl, id } = event;
+	const { title, date, imageURL, id } = event;
 	return (
 		<Card className={classes.root}>
-			<CardMedia className={classes.media} image={imageUrl} title={title} />
+			<CardMedia
+				className={classes.media}
+				image={
+					imageURL
+						? imageURL
+						: require('../../assets/event-img-placeholder.jpg')
+				}
+				title={title}
+			/>
 
 			<CardContent>
-				<Typography variant="body2" align="left" color="primary">
-					{date}
+				<Typography variant="body1" align="left" color="primary">
+					{format(date.toDate(), 'EEE, MMM dd')} at{' '}
+					{format(date.toDate(), 'HH:mm')}
 				</Typography>
 				<Typography variant="subtitle1" align="left" component="p">
 					{title}
@@ -49,7 +61,7 @@ const EventItem = ({ event, deleteEvent, history, match }) => {
 			<Grid container>
 				<Grid item xs={6}>
 					<CardActions disableSpacing>
-						<FavIconEvent event={event} />
+						<FavIcon event={event} />
 
 						<Tooltip title="See details">
 							<IconButton

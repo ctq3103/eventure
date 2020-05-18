@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
-import { BrowserRouter } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import ReduxToastr from 'react-redux-toastr';
@@ -13,6 +13,7 @@ import { ReactReduxFirebaseProvider, isLoaded } from 'react-redux-firebase';
 import { createFirestoreInstance } from 'redux-firestore';
 import firebase from './config/firebase';
 import Loading from './components/Loading';
+import history from './history';
 
 //React-redux-firebase config
 const rrfConfig = {
@@ -20,7 +21,8 @@ const rrfConfig = {
 	attachAuthIsReady: true,
 	// Firestore for Profile instead of Realtime DB
 	useFirestoreForProfile: true,
-	createFirestoreInstance,
+	updateProfileOnLogin: false,
+	preserveOnLogin: { auth: true, profile: true },
 };
 
 const rrfProps = {
@@ -39,7 +41,7 @@ function AuthIsLoaded({ children }) {
 ReactDOM.render(
 	<Provider store={store}>
 		<ReactReduxFirebaseProvider {...rrfProps}>
-			<BrowserRouter>
+			<Router history={history}>
 				<AuthIsLoaded>
 					<ReduxToastr
 						preventDuplicates
@@ -54,7 +56,7 @@ ReactDOM.render(
 						<App />
 					</PersistGate>
 				</AuthIsLoaded>
-			</BrowserRouter>
+			</Router>
 		</ReactReduxFirebaseProvider>
 	</Provider>,
 	document.getElementById('root')

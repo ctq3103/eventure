@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { createEvent, updateEvent } from '../../redux/events/events.actions';
+import { useFirestoreConnect } from 'react-redux-firebase';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -8,7 +8,6 @@ import CreateIcon from '@material-ui/icons/Create';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
 import { Field, reduxForm } from 'redux-form';
 import TextInput from '../forms/TextInput';
 import SelectInput from '../forms/SelectInput';
@@ -18,11 +17,22 @@ import {
 	isRequired,
 	composeValidators,
 	hasLengthGreaterThan,
+	hasLengthLessThan,
 } from 'revalidate';
-import DateTime from '../forms/DateTimePicker';
+import DateTimeInput from '../forms/DateTimePicker';
+import {
+	createEvent,
+	updateEvent,
+	deleteEvent,
+} from '../../redux/events/events.actions';
 
 const validate = combineValidators({
-	title: isRequired({ message: 'Event Title is required' }),
+	title: composeValidators(
+		isRequired({ message: 'Event Title is required' }),
+		hasLengthLessThan(50)({
+			message: 'Event title needs to be less than 50 characters',
+		})
+	)(),
 	description: composeValidators(
 		isRequired({ message: 'Description is required' }),
 		hasLengthGreaterThan(10)({
@@ -33,12 +43,20 @@ const validate = combineValidators({
 });
 
 const categories = [
-	{ key: 'Business', text: 'Business & Professional', value: 'Business' },
-	{ key: 'Charity', text: 'Charity & Causes', value: 'Charity' },
+	{
+		key: 'Business',
+		text: 'Business & Professional',
+		value: 'Business & Professional',
+	},
+	{ key: 'Charity', text: 'Charity & Causes', value: 'Charity & Causes' },
 	{ key: 'Education', text: 'Education', value: 'Education' },
 	{ key: 'Entertainment', text: 'Entertainment', value: 'Entertainment' },
-	{ key: 'Health', text: 'Health & Wellness', value: 'Health' },
-	{ key: 'Hobbies', text: 'Hobbies & Special Interests', value: 'Hobbies' },
+	{ key: 'Health', text: 'Health & Wellness', value: 'Health & Wellness' },
+	{
+		key: 'Hobbies',
+		text: 'Hobbies & Special Interests',
+		value: 'Hobbies & Special Interests',
+	},
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -60,18 +78,37 @@ const useStyles = makeStyles((theme) => ({
 		marginBottom: theme.spacing(4),
 	},
 	submit: {
-		margin: theme.spacing(3, 0, 2),
+		marginTop: theme.spacing(3),
 	},
 }));
 
-const EventForm = ({ invalid, submitting, pristine, initialValues }) => {
+const EventForm = ({
+	handleSubmit,
+	invalid,
+	submitting,
+	pristine,
+	initialValues,
+	dispatch,
+	history,
+	updateEvent,
+	createEvent,
+}) => {
 	const classes = useStyles();
-	// console.log(initialValues);
-	// const [eventManage] = useState(event);
-	//const { title, venue, description, category } = initialValues;
+	useFirestoreConnect([{ collection: 'events' }]);
+
+	const onFormSubmit = async (values) => {
+		if (initialValues && initialValues.id) {
+			await updateEvent(values);
+			history.push(`/event/${initialValues.id}`);
+		} else {
+			//let createdEvent = await createEvent(values);
+			// console.log('createdEvent', createdEvent);
+			await createEvent(values);
+		}
+	};
 
 	return (
-		<Container component="main" maxWidth="xs">
+		<Container component="main" maxWidth="sm">
 			<CssBaseline />
 			<div className={classes.paper}>
 				<Avatar className={classes.avatar}>
@@ -80,7 +117,11 @@ const EventForm = ({ invalid, submitting, pristine, initialValues }) => {
 				<Typography component="h1" variant="h5">
 					Event Form
 				</Typography>
-				<form className={classes.form} autoComplete="off">
+				<form
+					onSubmit={handleSubmit(onFormSubmit)}
+					className={classes.form}
+					autoComplete="off"
+				>
 					<Grid container spacing={2}>
 						<Grid item xs={12}>
 							<Field
@@ -90,7 +131,6 @@ const EventForm = ({ invalid, submitting, pristine, initialValues }) => {
 								label="Event Title"
 								name="title"
 								autoFocus
-								//defaultValue={title}
 							/>
 						</Grid>
 
@@ -103,7 +143,6 @@ const EventForm = ({ invalid, submitting, pristine, initialValues }) => {
 								label="Event Category"
 								type="category"
 								id="category"
-								//defaultValue={category}
 							/>
 						</Grid>
 
@@ -117,18 +156,16 @@ const EventForm = ({ invalid, submitting, pristine, initialValues }) => {
 								id="description"
 								multiline
 								rowsMax={50}
-								//defaultValue={description}
 							/>
 						</Grid>
 
 						<Grid item xs={12}>
 							<Field
-								component={DateTime}
+								component={DateTimeInput}
 								required
-								name="dateTime"
-								label="Date & Time"
-								type="dateTime"
-								id="dateTime"
+								disablePast
+								name="date"
+								id="date"
 							/>
 						</Grid>
 
@@ -140,35 +177,39 @@ const EventForm = ({ invalid, submitting, pristine, initialValues }) => {
 								label="Venue"
 								type="venue"
 								id="venue"
-								//defaultValue={venue}
 							/>
 						</Grid>
 					</Grid>
-					{/* {authError && (
-						<Typography variant="subtitle2" color="primary">
-							{authError.message}
-						</Typography>
-					)} */}
-					<Button
-						disabled={invalid || submitting}
-						type="submit"
-						fullWidth
-						variant="contained"
-						color="secondary"
-						className={classes.submit}
-					>
-						Submit
-					</Button>
-					<Button
-						disabled={invalid || submitting}
-						type="submit"
-						fullWidth
-						variant="contained"
-						color="primary"
-						className={classes.submit}
-					>
-						Update
-					</Button>
+
+					<Grid item xs={12}>
+						<Button
+							disabled={invalid || submitting || pristine}
+							type="submit"
+							variant="contained"
+							color="secondary"
+							className={classes.submit}
+						>
+							Submit
+						</Button>
+					</Grid>
+
+					{initialValues && (
+						<Grid item xs={12}>
+							<Button
+								fullWidth
+								className={classes.submit}
+								variant="contained"
+								color="inherit"
+								onClick={
+									initialValues.id
+										? () => history.push(`/event/${initialValues.id}`)
+										: () => history.push('/events')
+								}
+							>
+								Cancel
+							</Button>
+						</Grid>
+					)}
 				</form>
 			</div>
 		</Container>
@@ -185,11 +226,18 @@ const mapStateToProps = (state, ownProps) => {
 
 	let event;
 
-	if (eventId && state.events.length > 0) {
-		event = state.events.filter((event) => event.id === eventId)[0];
+	if (
+		eventId &&
+		state.firestore.ordered.events &&
+		state.firestore.ordered.events.length > 0
+	) {
+		event = state.firestore.ordered.events.filter(
+			(event) => event.id === eventId
+		)[0];
 	}
 	return {
 		initialValues: event,
+		event,
 	};
 };
 

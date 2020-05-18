@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Typography } from '@material-ui/core';
-import FavoriteItem from '../../components/Events/FavoriteItem';
+import FavoriteItem from '../../components/Favorite/FavoriteItem';
 import { selectFavItems } from '../../redux/favorite/favorite.selectors';
 
 const useStyles = makeStyles((theme) => ({

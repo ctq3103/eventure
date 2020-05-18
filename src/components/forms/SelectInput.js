@@ -21,7 +21,12 @@ const SelectInput = ({
 
 	return (
 		<div>
-			<FormControl fullWidth variant="outlined" error={touched && !!error}>
+			<FormControl
+				{...input}
+				fullWidth
+				variant="outlined"
+				error={touched && !!error}
+			>
 				<InputLabel id="select-input">{label}</InputLabel>
 				<Select
 					labelId="select-input"

@@ -1,46 +1,31 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { Paper } from '@material-ui/core';
-import EventDetailInfo from '../../components/Events/EventDetailInfo';
-import EventDetailBtn from '../../components/Events/EventDetailBtn';
+import { withFirestore, useFirestoreConnect } from 'react-redux-firebase';
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		flexGrow: 1,
-		margin: theme.spacing(5),
-	},
-	paper: {
-		textAlign: 'left',
-		color: theme.palette.text.primary,
-		padding: theme.spacing(6),
-	},
-}));
+import EventDetailInfo from '../../components/Events/EventDetails/EventDetailInfo';
+
+const EventDetailPage = ({ event }) => {
+	useFirestoreConnect('events');
+	return <EventDetailInfo event={event} />;
+};
 
 const mapStateToProps = (state, ownProps) => {
 	const eventId = ownProps.match.params.id;
 	let event = {};
 
-	if (eventId && state.events.length > 0) {
-		event = state.events.filter((event) => event.id === eventId)[0];
+	if (
+		eventId &&
+		state.firestore.ordered.events &&
+		state.firestore.ordered.events.length > 0
+	) {
+		event = state.firestore.ordered.events.filter(
+			(event) => event.id === eventId
+		)[0];
 	}
 
 	return {
-		event: event,
+		event,
 	};
 };
 
-const EventDetailPage = ({ event }) => {
-	const classes = useStyles();
-	return (
-		<div className={classes.root}>
-			<Paper elevation={3} className={classes.paper}>
-				<EventDetailInfo event={event}>
-					<EventDetailBtn event={event} />
-				</EventDetailInfo>
-			</Paper>
-		</div>
-	);
-};
-
-export default connect(mapStateToProps)(EventDetailPage);
+export default withFirestore(connect(mapStateToProps)(EventDetailPage));

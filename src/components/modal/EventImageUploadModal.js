@@ -2,12 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
-import SignInForm from '../auth/SignInForm';
 import { closeModal } from '../../redux/modals/modal.actions';
+import EventImageUpload from '../Events/EventDetails/ImageProcessing/EventImageUpload';
 
 const mapDispatchToProps = { closeModal };
 
-const SignInModal = ({ closeModal }) => {
+const EventImageUploadModal = ({ closeModal }) => {
 	return (
 		<Dialog
 			open={true}
@@ -15,10 +15,10 @@ const SignInModal = ({ closeModal }) => {
 			aria-labelledby="signIn-form-modal"
 		>
 			<DialogContent>
-				<SignInForm />
+				<EventImageUpload />
 			</DialogContent>
 		</Dialog>
 	);
 };
 
-export default connect(null, mapDispatchToProps)(SignInModal);
+export default connect(null, mapDispatchToProps)(EventImageUploadModal);

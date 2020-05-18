@@ -43,7 +43,7 @@ function* uploadPhoto({ payload: { file, fileName } }) {
 	};
 
 	try {
-		//uplad file to firebase storage
+		//upload file to firebase storage
 		let uploadedFile = yield firebase.uploadFile(path, file, null, options);
 		//get URL of image
 		let downloadURL = yield uploadedFile.uploadTaskSnapshot.ref.getDownloadURL();
@@ -89,11 +89,11 @@ function* deletePhoto({ payload: { photo } }) {
 	try {
 		yield firebase.deleteFile(`${user.uid}/user_images/${photo.name}`);
 		yield firestore.doc(`users/${user.uid}/photos/${photo.id}`).delete();
-		toastr.success('Success', 'Photo has been deleted');
 		yield put(deletePhotoSuccess(photo));
+		toastr.success('Success', 'Photo has been deleted');
 	} catch (error) {
-		toastr.error('Error', 'Problem deleting photo');
 		yield put(deletePhotoFailure(error));
+		toastr.error('Error', 'Problem deleting photo');
 	}
 }
 
@@ -106,11 +106,11 @@ function* setProfilePhoto({ payload: { photo } }) {
 		yield firebase.updateProfile({
 			photoURL: photo.url,
 		});
-		toastr.success('Success', 'Profile picture has been set');
 		yield put(setProfilePhotoSuccess(photo));
+		toastr.success('Success', 'Profile picture has been set');
 	} catch (error) {
-		toastr.error('Error', 'Problem setting profile picture');
 		yield put(setProfilePhotoFailure(error));
+		toastr.error('Error', 'Problem setting profile picture');
 	}
 }
 

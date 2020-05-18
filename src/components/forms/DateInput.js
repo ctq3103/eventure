@@ -7,38 +7,39 @@ import {
 	KeyboardDatePicker,
 } from '@material-ui/pickers';
 
-export default function DateInput({ input, name, label, maxDate }) {
-	// The first commit of Material-UI
-	const [selectedDate, setSelectedDate] = React.useState(
-		new Date('2000-01-01T21:11:54')
-	);
+const DateInput = (props) => {
+	const {
+		meta: { submitting, error, touched },
+		input: { onBlur, value, ...inputProps },
+		...others
+	} = props;
 
-	const handleDateChange = (date) => {
-		setSelectedDate(date);
+	const onChange = (date) => {
+		Date.parse(date)
+			? inputProps.onChange(date.toISOString())
+			: inputProps.onChange(null);
 	};
 
 	return (
 		<MuiPickersUtilsProvider utils={DateFnsUtils}>
 			<Grid container justify="space-around">
 				<KeyboardDatePicker
-					{...input}
-					name={name}
-					label={label}
-					maxDate={maxDate}
-					disableToolbar
+					{...inputProps}
+					{...others}
+					autoOk
+					label="Choose Date"
 					fullWidth
-					variant="inline"
 					inputVariant="outlined"
-					format="dd LLL yyyy"
-					margin="normal"
-					id="date-picker-inline"
-					value={selectedDate}
-					onChange={handleDateChange}
-					KeyboardButtonProps={{
-						'aria-label': 'change date',
-					}}
+					format="dd LLL yyy"
+					value={value ? new Date(value) : null}
+					disabled={submitting}
+					onBlur={() => onBlur(value ? new Date(value).toISOString() : null)}
+					error={error && touched}
+					onChange={onChange}
 				/>
 			</Grid>
 		</MuiPickersUtilsProvider>
 	);
-}
+};
+
+export default DateInput;

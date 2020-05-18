@@ -1,5 +1,5 @@
 import { takeLatest, put, all, call } from 'redux-saga/effects';
-import { reduxSagaFirebase } from '../../config/firebase';
+import { auth, firestore } from '../../config/firebase';
 import { reset } from 'redux-form';
 import firebase from '../../config/firebase';
 import { toastr } from 'react-redux-toastr';
@@ -21,11 +21,7 @@ import {
 
 export function* signInWithEmail({ payload: { email, password } }) {
 	try {
-		const user = yield call(
-			reduxSagaFirebase.auth.signInWithEmailAndPassword,
-			email,
-			password
-		);
+		const user = yield auth.signInWithEmailAndPassword(email, password);
 		yield put(signInSuccess(user));
 		yield put(closeModal());
 	} catch (error) {
@@ -40,18 +36,23 @@ export function* onEmailSignInStart() {
 export function* registerUser({ payload: { email, password, displayName } }) {
 	try {
 		//create new User
-		const { user } = yield call(
-			reduxSagaFirebase.auth.createUserWithEmailAndPassword,
-			email,
-			password
-		);
+		const user = yield auth.createUserWithEmailAndPassword(email, password);
 
-		//set user doc on firestore
-		yield call(reduxSagaFirebase.firestore.setDocument, `users/${user.uid}`, {
+		yield user.user.updateProfile({
+			displayName: displayName,
+		});
+
+		let newUser = {
 			displayName: displayName,
 			email: email,
 			createdAt: new Date(),
-		});
+		};
+
+		yield firestore
+			.collection('users')
+			.doc(`${user.user.uid}`)
+			.set({ ...newUser });
+
 		yield put(registerSuccess(user));
 		yield put(closeModal());
 	} catch (error) {
@@ -74,7 +75,7 @@ export function* socialSignIn({ payload: selectedProvider }) {
 			const facebookProvider = new firebase.auth.FacebookAuthProvider();
 			authProvider = facebookProvider;
 		}
-		const data = yield firebase.auth().signInWithPopup(authProvider);
+		const data = yield auth.signInWithPopup(authProvider);
 		const {
 			user,
 			additionalUserInfo: { isNewUser },
@@ -82,7 +83,7 @@ export function* socialSignIn({ payload: selectedProvider }) {
 
 		if (isNewUser) {
 			//set user doc on firestore
-			yield call(reduxSagaFirebase.firestore.setDocument, `users/${user.uid}`, {
+			yield firestore.collection('users').doc(`${user.uid}`).set({
 				displayName: user.displayName,
 				email: user.email,
 				photoURL: user.photoURL,
@@ -101,8 +102,9 @@ export function* onSocialSignInStart() {
 }
 
 export function* updatePassword({ payload: user }) {
+	const currentUser = auth.currentUser;
 	try {
-		yield call(reduxSagaFirebase.auth.updatePassword, user.password);
+		yield currentUser.updatePassword(user.password);
 
 		toastr.success('Success', 'Your password has been updated');
 		yield put(updatePasswordSuccess(user));

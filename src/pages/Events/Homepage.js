@@ -3,12 +3,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import CharitySvg from '../../components/assets/CharitySvg';
-import EducationSvg from '../../components/assets/EducationSvg';
-import EntertainmentSvg from '../../components/assets/EntertainmentSvg';
-import FitnessSvg from '../../components/assets/FitnessSvg';
-import HobbySvg from '../../components/assets/HobbySvg';
-import BusinessSvg from '../../components/assets/BusinessSvg';
+import CharitySvg from '../../assets/CharitySvg';
+import EducationSvg from '../../assets/EducationSvg';
+import EntertainmentSvg from '../../assets/EntertainmentSvg';
+import FitnessSvg from '../../assets/FitnessSvg';
+import HobbySvg from '../../assets/HobbySvg';
+import BusinessSvg from '../../assets/BusinessSvg';
 
 const useStyles = makeStyles((theme) => ({
 	root: {

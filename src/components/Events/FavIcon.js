@@ -7,7 +7,7 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import { toggleAddFavItem } from '../../redux/favorite/favorite.actions';
 import { selectFavItems } from '../../redux/favorite/favorite.selectors';
 
-const FavIconEvent = ({ event, favItems, dispatch }) => {
+const FavIcon = ({ event, favItems, dispatch }) => {
 	return (
 		<Tooltip
 			title={
@@ -36,4 +36,4 @@ const mapStateToProps = createStructuredSelector({
 	favItems: selectFavItems,
 });
 
-export default connect(mapStateToProps)(FavIconEvent);
+export default connect(mapStateToProps)(FavIcon);
