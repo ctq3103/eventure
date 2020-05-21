@@ -19,7 +19,7 @@ import {
 	updatePasswordFailure,
 } from './auth.actions';
 
-export function* signInWithEmail({ payload: { email, password } }) {
+function* signInWithEmail({ payload: { email, password } }) {
 	try {
 		const user = yield auth.signInWithEmailAndPassword(email, password);
 		yield put(signInSuccess(user));
@@ -29,11 +29,11 @@ export function* signInWithEmail({ payload: { email, password } }) {
 	}
 }
 
-export function* onEmailSignInStart() {
+function* onEmailSignInStart() {
 	yield takeLatest(EMAIL_SIGN_IN_START, signInWithEmail);
 }
 
-export function* registerUser({ payload: { email, password, displayName } }) {
+function* registerUser({ payload: { email, password, displayName } }) {
 	try {
 		//create new User
 		const user = yield auth.createUserWithEmailAndPassword(email, password);
@@ -60,11 +60,11 @@ export function* registerUser({ payload: { email, password, displayName } }) {
 	}
 }
 
-export function* onRegisterStart() {
+function* onRegisterStart() {
 	yield takeLatest(REGISTER_START, registerUser);
 }
 
-export function* socialSignIn({ payload: selectedProvider }) {
+function* socialSignIn({ payload: selectedProvider }) {
 	yield put(closeModal());
 	try {
 		let authProvider;
@@ -97,11 +97,11 @@ export function* socialSignIn({ payload: selectedProvider }) {
 	}
 }
 
-export function* onSocialSignInStart() {
+function* onSocialSignInStart() {
 	yield takeLatest(SOCIAL_SIGN_IN_START, socialSignIn);
 }
 
-export function* updatePassword({ payload: user }) {
+function* updatePassword({ payload: user }) {
 	const currentUser = auth.currentUser;
 	try {
 		yield currentUser.updatePassword(user.password);
@@ -114,7 +114,7 @@ export function* updatePassword({ payload: user }) {
 	}
 }
 
-export function* onUpdatePasswordStart() {
+function* onUpdatePasswordStart() {
 	yield takeLatest(UPDATE_PASSWORD_START, updatePassword);
 }
 

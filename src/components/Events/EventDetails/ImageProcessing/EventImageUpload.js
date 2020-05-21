@@ -4,7 +4,6 @@ import { useFirestoreConnect } from 'react-redux-firebase';
 import { makeStyles } from '@material-ui/core/styles';
 import {
 	Grid,
-	Divider,
 	Typography,
 	Paper,
 	Button,
@@ -17,48 +16,36 @@ import { toastr } from 'react-redux-toastr';
 const useStyles = makeStyles((theme) => ({
 	root: {
 		flexGrow: 1,
-		padding: theme.spacing(2),
-		marginLeft: theme.spacing(8),
-		width: '70vw',
+		padding: theme.spacing(5),
 	},
-	grid: {
-		marginBottom: theme.spacing(2),
-	},
-	card: {
-		//maxWidth: 200,
-		marginTop: theme.spacing(2),
-	},
-	cardPhoto: {
-		height: 0,
-		paddingTop: '100%',
-	},
+
+	// card: {
+	// 	//maxWidth: 200,
+	// 	marginTop: theme.spacing(2),
+	// },
+	// cardPhoto: {
+	// 	height: 0,
+	// 	paddingTop: '100%',
+	//},
 	paper: {
 		display: 'flex',
 		flexDirection: 'column',
 		alignItems: 'center',
 		justifyContent: 'center',
-		width: theme.spacing(40),
-		height: theme.spacing(40),
-		marginTop: theme.spacing(2),
+		width: theme.spacing(20),
+		height: theme.spacing(11.5),
 	},
 }));
 
-const EventImageUpload = ({
-	uploadPhoto,
-	deletePhoto,
-	setProfilePhoto,
-	photos,
-	profile,
-	auth,
-}) => {
-	useFirestoreConnect([
-		{
-			collection: 'users',
-			doc: auth.uid,
-			subcollections: [{ collection: 'photos' }],
-			storeAs: 'photos',
-		},
-	]);
+const EventImageUpload = () => {
+	// useFirestoreConnect([
+	// 	{
+	// 		collection: 'events',
+	// 		doc: event.id,
+	// 		subcollections: [{ collection: 'photos' }],
+	// 		storeAs: 'photos',
+	// 	},
+	// ]);
 
 	const [files, setFiles] = useState([]);
 	const [image, setImage] = useState(null);
@@ -72,35 +59,41 @@ const EventImageUpload = ({
 
 	const classes = useStyles();
 
-	const handleUploadImage = async () => {
-		try {
-			await uploadPhoto(image, files[0].name);
-			handleCancelCrop();
-			toastr.success('Success', 'Photo has been uploaded');
-		} catch (error) {
-			toastr.error('Oops', 'Something went wrong');
-		}
-	};
+	// const handleUploadImage = async () => {
+	// 	try {
+	// 		await uploadPhoto(image, files[0].name);
+	// 		handleCancelCrop();
+	// 		toastr.success('Success', 'Photo has been uploaded');
+	// 	} catch (error) {
+	// 		toastr.error('Oops', 'Something went wrong');
+	// 	}
+	// };
 
-	const handleCancelCrop = () => {
-		setFiles([]);
-		setImage([]);
-	};
+	// const handleCancelCrop = () => {
+	// 	setFiles([]);
+	// 	setImage([]);
+	// };
 
 	return (
 		<div className={classes.root}>
-			<Grid container spacing={3} className={classes.grid} justify="center">
-				<Grid item xs={12} sm={4}>
-					<Typography variant="subtitle1" align="center">
+			<Grid
+				container
+				spacing={4}
+				className={classes.grid}
+				justify="center"
+				alignItems="center"
+			>
+				<Grid item xs={4}>
+					{/* <Typography variant="subtitle1" align="center">
 						1. Drag and drop your photo
-					</Typography>
+					</Typography> */}
 					<DropzoneInput setFiles={setFiles} />
 				</Grid>
 
-				<Grid item xs={12} sm={4}>
-					<Typography variant="subtitle1" align="center">
+				<Grid item xs={4}>
+					{/* <Typography variant="subtitle1" align="center">
 						2. Resizing photo
-					</Typography>
+					</Typography> */}
 					{files.length > 0 && (
 						<Paper elevation={0} className={classes.paper}>
 							<CropperInput
@@ -110,23 +103,22 @@ const EventImageUpload = ({
 						</Paper>
 					)}
 				</Grid>
-				<Grid item xs={12} sm={4}>
-					<Typography variant="subtitle1" align="center">
+				<Grid item xs={4}>
+					{/* <Typography variant="subtitle1" align="center">
 						3. Preview and Upload
-					</Typography>
+					</Typography> */}
 
 					{files.length > 0 && (
 						<Paper elevation={0} className={classes.paper}>
 							<div
 								id="img-preview"
 								style={{
-									minHeight: '270px',
 									minWidth: '270px',
 									overflow: 'hidden',
 								}}
 							/>
 
-							<CardActions>
+							{/* <CardActions>
 								<Button
 									variant="outlined"
 									color="secondary"
@@ -141,7 +133,7 @@ const EventImageUpload = ({
 								>
 									Cancel
 								</Button>
-							</CardActions>
+							</CardActions> */}
 						</Paper>
 					)}
 				</Grid>

@@ -26,11 +26,11 @@ const SelectInput = ({
 				fullWidth
 				variant="outlined"
 				error={touched && !!error}
+				name={name}
 			>
 				<InputLabel id="select-input">{label}</InputLabel>
 				<Select
 					labelId="select-input"
-					//input={<Input />}
 					value={category}
 					onChange={handleChange}
 					label={label}
@@ -52,12 +52,3 @@ const SelectInput = ({
 };
 
 export default SelectInput;
-
-// const category = [
-//     {key: 'charity', text: "Charity & Causes"},
-//     {key: 'business', text: "Business & Professional"},
-//     {key: 'education', text: "Education"},
-//     {key: 'entertainment', text: "Entertainment"},
-//     {key: 'health', text: "Health & Wellness"},
-//     {key: 'hobbies', text: "Hobbies & Special Interests"}
-// ]

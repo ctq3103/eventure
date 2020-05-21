@@ -4,7 +4,7 @@ export const createNewEvent = (user, photoURL, event) => {
 		creatorUid: user.uid,
 		creator: user.displayName,
 		creatorPhotoURL: photoURL || '../assets/user.png',
-		date: new Date(),
+		createdAt: new Date(),
 		attendees: {
 			[user.uid]: {
 				going: true,
@@ -15,4 +15,12 @@ export const createNewEvent = (user, photoURL, event) => {
 			},
 		},
 	};
+};
+
+export const objectToArray = (object) => {
+	if (object) {
+		return Object.entries(object).map((e) =>
+			Object.assign({}, e[1], { id: e[0] })
+		);
+	}
 };

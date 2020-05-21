@@ -11,6 +11,12 @@ import {
 	SET_PROFILE_PHOTO,
 	SET_PROFILE_PHOTO_SUCCESS,
 	SET_PROFILE_PHOTO_FAILURE,
+	JOIN_EVENT,
+	JOIN_EVENT_SUCCESS,
+	JOIN_EVENT_FAILURE,
+	CANCEL_JOIN_EVENT,
+	CANCEL_JOIN_EVENT_SUCCESS,
+	CANCEL_JOIN_EVENT_FAILURE,
 } from './user.types';
 
 export const updateProfile = (user) => {
@@ -93,6 +99,48 @@ export const setProfilePhotoSuccess = (photo) => {
 export const setProfilePhotoFailure = (error) => {
 	return {
 		type: SET_PROFILE_PHOTO_FAILURE,
+		payload: error,
+	};
+};
+
+export const joinEvent = (event) => {
+	return {
+		type: JOIN_EVENT,
+		payload: { event },
+	};
+};
+
+export const joinEventSuccess = (event) => {
+	return {
+		type: JOIN_EVENT_SUCCESS,
+		payload: { event },
+	};
+};
+
+export const joinEventFailure = (error) => {
+	return {
+		type: JOIN_EVENT_FAILURE,
+		payload: error,
+	};
+};
+
+export const cancelJoinEvent = (event) => {
+	return {
+		type: CANCEL_JOIN_EVENT,
+		payload: { event },
+	};
+};
+
+export const cancelJoinEventSuccess = (event) => {
+	return {
+		type: CANCEL_JOIN_EVENT_SUCCESS,
+		payload: { event },
+	};
+};
+
+export const cancelJoinEventFailure = (error) => {
+	return {
+		type: CANCEL_JOIN_EVENT_FAILURE,
 		payload: error,
 	};
 };

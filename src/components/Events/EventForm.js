@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { useFirestoreConnect } from 'react-redux-firebase';
+import { withFirestore } from 'react-redux-firebase';
+import { compose } from 'redux';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import CreateIcon from '@material-ui/icons/Create';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Field, reduxForm } from 'redux-form';
 import TextInput from '../forms/TextInput';
 import SelectInput from '../forms/SelectInput';
-import { Grid } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
 import {
 	combineValidators,
 	isRequired,
@@ -23,14 +24,14 @@ import DateTimeInput from '../forms/DateTimePicker';
 import {
 	createEvent,
 	updateEvent,
-	deleteEvent,
+	cancelToggle,
 } from '../../redux/events/events.actions';
 
 const validate = combineValidators({
 	title: composeValidators(
 		isRequired({ message: 'Event Title is required' }),
-		hasLengthLessThan(50)({
-			message: 'Event title needs to be less than 50 characters',
+		hasLengthLessThan(70)({
+			message: 'Event title needs to be less than 70 characters',
 		})
 	)(),
 	description: composeValidators(
@@ -57,9 +58,14 @@ const categories = [
 		text: 'Hobbies & Special Interests',
 		value: 'Hobbies & Special Interests',
 	},
+	{
+		key: 'Others',
+		text: 'Others',
+		value: 'Others',
+	},
 ];
 
-const useStyles = makeStyles((theme) => ({
+const styles = (theme) => ({
 	paper: {
 		marginTop: theme.spacing(5),
 		marginBottom: theme.spacing(5),
@@ -77,163 +83,190 @@ const useStyles = makeStyles((theme) => ({
 		marginTop: theme.spacing(4),
 		marginBottom: theme.spacing(4),
 	},
-	submit: {
+	button: {
 		marginTop: theme.spacing(3),
 	},
-}));
+});
 
-const EventForm = ({
-	handleSubmit,
-	invalid,
-	submitting,
-	pristine,
-	initialValues,
-	dispatch,
-	history,
-	updateEvent,
-	createEvent,
-}) => {
-	const classes = useStyles();
-	useFirestoreConnect([{ collection: 'events' }]);
+class EventForm extends Component {
+	componentDidMount() {
+		const { firestore, match } = this.props;
+		//setListener to get realtime data for cancelToggle
+		firestore.setListener(`events/${match.params.id}`);
+	}
 
-	const onFormSubmit = async (values) => {
+	componentWillUnmount() {
+		const { firestore, match } = this.props;
+
+		firestore.unsetListener(`events/${match.params.id}`);
+	}
+
+	onFormSubmit = async (values) => {
+		const { initialValues, updateEvent, createEvent } = this.props;
+
 		if (initialValues && initialValues.id) {
 			await updateEvent(values);
-			history.push(`/event/${initialValues.id}`);
 		} else {
-			//let createdEvent = await createEvent(values);
-			// console.log('createdEvent', createdEvent);
 			await createEvent(values);
 		}
 	};
 
-	return (
-		<Container component="main" maxWidth="sm">
-			<CssBaseline />
-			<div className={classes.paper}>
-				<Avatar className={classes.avatar}>
-					<CreateIcon />
-				</Avatar>
-				<Typography component="h1" variant="h5">
-					Event Form
-				</Typography>
-				<form
-					onSubmit={handleSubmit(onFormSubmit)}
-					className={classes.form}
-					autoComplete="off"
-				>
-					<Grid container spacing={2}>
-						<Grid item xs={12}>
-							<Field
-								component={TextInput}
-								required
-								id="title"
-								label="Event Title"
-								name="title"
-								autoFocus
-							/>
+	render() {
+		const {
+			classes,
+			handleSubmit,
+			invalid,
+			submitting,
+			pristine,
+			initialValues,
+			history,
+			event,
+			cancelToggle,
+		} = this.props;
+
+		return (
+			<Container component="main" maxWidth="sm">
+				<CssBaseline />
+				<div className={classes.paper}>
+					<Avatar className={classes.avatar}>
+						<CreateIcon />
+					</Avatar>
+					<Typography component="h1" variant="h5">
+						Event Form
+					</Typography>
+					<form
+						onSubmit={handleSubmit(this.onFormSubmit)}
+						className={classes.form}
+						autoComplete="off"
+					>
+						<Grid container spacing={2}>
+							<Grid item xs={12}>
+								<Field
+									component={TextInput}
+									required
+									id="title"
+									label="Event Title"
+									name="title"
+									autoFocus
+								/>
+							</Grid>
+
+							<Grid item xs={12}>
+								<Field
+									component={SelectInput}
+									options={categories}
+									required
+									name="category"
+									label="Event Category"
+									type="category"
+									id="category"
+								/>
+							</Grid>
+
+							<Grid item xs={12}>
+								<Field
+									component={TextInput}
+									required
+									name="description"
+									label="Event Description"
+									type="description"
+									id="description"
+									multiline
+									rowsMax={50}
+								/>
+							</Grid>
+
+							<Grid item xs={12}>
+								<Field
+									component={DateTimeInput}
+									required
+									disablePast
+									name="date"
+									id="date"
+								/>
+							</Grid>
+
+							<Grid item xs={12}>
+								<Field
+									component={TextInput}
+									required
+									name="venue"
+									label="Venue"
+									type="venue"
+									id="venue"
+								/>
+							</Grid>
 						</Grid>
 
-						<Grid item xs={12}>
-							<Field
-								component={SelectInput}
-								options={categories}
-								required
-								name="category"
-								label="Event Category"
-								type="category"
-								id="category"
-							/>
-						</Grid>
+						<Grid container alignItems="center" justify="space-around">
+							<Grid item xs={5}>
+								<Button
+									disabled={invalid || submitting || pristine}
+									type="submit"
+									variant="contained"
+									color="secondary"
+									fullWidth
+									className={classes.button}
+								>
+									Submit
+								</Button>
+							</Grid>
+							<Grid item xs={5}>
+								<Button
+									fullWidth
+									className={classes.button}
+									variant="contained"
+									color="inherit"
+									onClick={
+										initialValues && initialValues.id
+											? () => history.push(`/event/${initialValues.id}`)
+											: () => history.push('/events')
+									}
+								>
+									Cancel
+								</Button>
+							</Grid>
 
-						<Grid item xs={12}>
-							<Field
-								component={TextInput}
-								required
-								name="description"
-								label="Event Description"
-								type="description"
-								id="description"
-								multiline
-								rowsMax={50}
-							/>
-						</Grid>
+							{/* toggle will not work if we use setListener for initialValues */}
 
-						<Grid item xs={12}>
-							<Field
-								component={DateTimeInput}
-								required
-								disablePast
-								name="date"
-								id="date"
-							/>
+							<Grid item>
+								<Button
+									variant="outlined"
+									color={event.cancelled ? 'secondary' : 'primary'}
+									onClick={() => cancelToggle(!event.cancelled, event.id)}
+									className={classes.button}
+								>
+									{event.cancelled ? 'Reactivate Event' : 'Cancel Event'}
+								</Button>
+							</Grid>
 						</Grid>
-
-						<Grid item xs={12}>
-							<Field
-								component={TextInput}
-								required
-								name="venue"
-								label="Venue"
-								type="venue"
-								id="venue"
-							/>
-						</Grid>
-					</Grid>
-
-					<Grid item xs={12}>
-						<Button
-							disabled={invalid || submitting || pristine}
-							type="submit"
-							variant="contained"
-							color="secondary"
-							className={classes.submit}
-						>
-							Submit
-						</Button>
-					</Grid>
-
-					{initialValues && (
-						<Grid item xs={12}>
-							<Button
-								fullWidth
-								className={classes.submit}
-								variant="contained"
-								color="inherit"
-								onClick={
-									initialValues.id
-										? () => history.push(`/event/${initialValues.id}`)
-										: () => history.push('/events')
-								}
-							>
-								Cancel
-							</Button>
-						</Grid>
-					)}
-				</form>
-			</div>
-		</Container>
-	);
-};
+					</form>
+				</div>
+			</Container>
+		);
+	}
+}
 
 const mapDispatchToProps = {
 	createEvent,
 	updateEvent,
+	cancelToggle,
 };
 
 const mapStateToProps = (state, ownProps) => {
 	const eventId = ownProps.match.params.id;
 
-	let event;
+	let event = {};
 
 	if (
 		eventId &&
 		state.firestore.ordered.events &&
 		state.firestore.ordered.events.length > 0
 	) {
-		event = state.firestore.ordered.events.filter(
-			(event) => event.id === eventId
-		)[0];
+		event =
+			state.firestore.ordered.events.filter(
+				(event) => event.id === eventId
+			)[0] || {};
 	}
 	return {
 		initialValues: event,
@@ -241,11 +274,16 @@ const mapStateToProps = (state, ownProps) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
+export default compose(
+	withStyles(styles, { withTheme: true }),
+	withFirestore
 )(
-	reduxForm({ form: 'EventForm', validate, enableReinitialize: true })(
-		EventForm
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)(
+		reduxForm({ form: 'EventForm', enableReinitialize: true, validate })(
+			EventForm
+		)
 	)
 );

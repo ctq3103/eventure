@@ -12,7 +12,7 @@ import {
 	Paper,
 } from '@material-ui/core';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
-import FavIcon from '../FavIcon';
+import Chip from '@material-ui/core/Chip';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -44,9 +44,17 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const EventDetailInfo = ({ event, history }) => {
+const EventDetailInfo = ({
+	event,
+	attendees,
+	history,
+	isCreator,
+	isAttendee,
+	joinEvent,
+	cancelJoinEvent,
+	openModal,
+}) => {
 	const classes = useStyles();
-
 	const {
 		title,
 		date,
@@ -54,7 +62,7 @@ const EventDetailInfo = ({ event, history }) => {
 		imageURL,
 		description,
 		creator,
-		attendees,
+		cancelled,
 	} = event;
 
 	return (
@@ -74,7 +82,12 @@ const EventDetailInfo = ({ event, history }) => {
 								alt={title}
 							/>
 
-							<Fab color="inherit" aria-label="edit" className={classes.imgBtn}>
+							<Fab
+								onClick={() => openModal('EventImageUploadModal')}
+								color="inherit"
+								aria-label="edit"
+								className={classes.imgBtn}
+							>
 								<PhotoCameraIcon />
 							</Fab>
 						</div>
@@ -97,7 +110,9 @@ const EventDetailInfo = ({ event, history }) => {
 								)}
 							</Grid>
 							<Grid item>
-								<FavIcon />
+								{cancelled && (
+									<Chip label="Cancelled" color="primary" variant="outlined" />
+								)}
 							</Grid>
 						</Grid>
 						<Grid item>
@@ -113,23 +128,43 @@ const EventDetailInfo = ({ event, history }) => {
 							</Typography>
 						</Grid>
 						<Grid item>
-							<Button
-								onClick={() => history.push(`/manage/${event.id}`)}
-								fullWidth
-								variant="contained"
-								color="primary"
-								size="large"
-							>
-								Manage Event
-							</Button>
-							<Button
-								fullWidth
-								variant="contained"
-								color="secondary"
-								size="large"
-							>
-								JOIN THIS EVENT
-							</Button>
+							{isCreator && (
+								<Button
+									onClick={() => history.push(`/manage/${event.id}`)}
+									fullWidth
+									variant="contained"
+									color="primary"
+									size="large"
+								>
+									MANAGE EVENT
+								</Button>
+							)}
+
+							{!isCreator && (
+								<>
+									{isAttendee ? (
+										<Button
+											fullWidth
+											variant="contained"
+											color="inherit"
+											size="large"
+											onClick={() => cancelJoinEvent(event)}
+										>
+											CANCEL MY PLACE
+										</Button>
+									) : (
+										<Button
+											fullWidth
+											variant="contained"
+											color="secondary"
+											size="large"
+											onClick={() => joinEvent(event)}
+										>
+											JOIN EVENT
+										</Button>
+									)}
+								</>
+							)}
 						</Grid>
 					</Grid>
 
@@ -143,6 +178,7 @@ const EventDetailInfo = ({ event, history }) => {
 								})}
 						</Typography>
 					</Grid>
+
 					<Grid item xs={12} sm={4}>
 						<div className={classes.detailedInfo}>
 							<Typography variant="h6" gutterBottom>
@@ -164,18 +200,18 @@ const EventDetailInfo = ({ event, history }) => {
 							</Typography>
 						</div>
 
-						{attendees && Object.keys(attendees).length > 1 && (
+						{attendees && (
 							<div className={classes.detailedInfo}>
 								<Typography variant="h6" gutterBottom>
 									Attendees
 								</Typography>
 
 								<AvatarGroup max={8}>
-									{Object.values(attendees).map(
+									{attendees.map(
 										(attendee, index) =>
 											!attendee.isCreator && (
 												<Avatar
-													key={index}
+													key={attendee.id}
 													alt={attendee.name}
 													src={attendee.photoURL}
 												/>

@@ -1,4 +1,4 @@
-import { CREATE_EVENT, UPDATE_EVENT, DELETE_EVENT } from './events.types';
+import { CREATE_EVENT, UPDATE_EVENT } from './events.types';
 
 export const eventsReducer = (state = [], action) => {
 	switch (action.type) {
@@ -9,8 +9,6 @@ export const eventsReducer = (state = [], action) => {
 				...state.filter((event) => event.id !== action.payload.event.id),
 				action.payload.event,
 			];
-		case DELETE_EVENT:
-			return [...state.filter((event) => event.id !== action.payload.event.id)];
 		default:
 			return state;
 	}

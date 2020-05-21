@@ -15,9 +15,7 @@ const DateInput = (props) => {
 	} = props;
 
 	const onChange = (date) => {
-		Date.parse(date)
-			? inputProps.onChange(date.toISOString())
-			: inputProps.onChange(null);
+		Date.parse(date) ? inputProps.onChange(date) : inputProps.onChange(null);
 	};
 
 	return (
@@ -33,7 +31,7 @@ const DateInput = (props) => {
 					format="dd LLL yyy"
 					value={value ? new Date(value) : null}
 					disabled={submitting}
-					onBlur={() => onBlur(value ? new Date(value).toISOString() : null)}
+					onBlur={() => onBlur(value ? new Date(value) : null)}
 					error={error && touched}
 					onChange={onChange}
 				/>

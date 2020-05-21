@@ -194,7 +194,13 @@ function Header({ history, auth, profile, dispatch }) {
 
 					<div className={classes.grow} />
 
-					<Button color="inherit" component={NavLink} exact to="/events">
+					<Button
+						color="inherit"
+						component={NavLink}
+						exact
+						to="/events"
+						className={classes.button}
+					>
 						Browse Events
 					</Button>
 
@@ -206,6 +212,7 @@ function Header({ history, auth, profile, dispatch }) {
 									color="secondary"
 									component={NavLink}
 									to="/createEvent"
+									className={classes.button}
 								>
 									Create Event
 								</Button>
@@ -215,6 +222,7 @@ function Header({ history, auth, profile, dispatch }) {
 										component={NavLink}
 										exact
 										to="/favorites"
+										className={classes.button}
 									>
 										<FavoriteIconNav />
 									</IconButton>

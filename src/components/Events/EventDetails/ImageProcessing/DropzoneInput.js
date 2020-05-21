@@ -13,8 +13,8 @@ const useStyles = makeStyles((theme) => ({
 		flexDirection: 'column',
 		alignItems: 'center',
 		justifyContent: 'center',
-		width: theme.spacing(40),
-		height: theme.spacing(40),
+		width: theme.spacing(20),
+		height: theme.spacing(20),
 		marginTop: theme.spacing(2),
 		'& > *': {
 			margin: theme.spacing(1),

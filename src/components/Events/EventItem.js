@@ -1,6 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { format } from 'date-fns';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -11,10 +10,9 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 import LaunchIcon from '@material-ui/icons/Launch';
-import DeleteIcon from '@material-ui/icons/Delete';
+import Chip from '@material-ui/core/Chip';
 import FavIcon from './FavIcon';
 import Grid from '@material-ui/core/Grid';
-import { deleteEvent } from '../../redux/events/events.actions';
 
 const useStyles = makeStyles(() => ({
 	root: {
@@ -27,15 +25,15 @@ const useStyles = makeStyles(() => ({
 		height: 0,
 		paddingTop: '56.25%', // 16:9
 	},
-	deleteAction: {
+	cancelled: {
 		display: 'block',
 		marginLeft: 'auto',
 	},
 }));
 
-const EventItem = ({ event, deleteEvent, history, match }) => {
+const EventItem = ({ event, history, match }) => {
 	const classes = useStyles();
-	const { title, date, imageURL, id } = event;
+	const { title, date, imageURL, id, cancelled } = event;
 	return (
 		<Card className={classes.root}>
 			<CardMedia
@@ -78,17 +76,11 @@ const EventItem = ({ event, deleteEvent, history, match }) => {
 					<CardActions
 						align="right"
 						disableSpacing
-						className={classes.deleteAction}
+						className={classes.cancelled}
 					>
-						<Tooltip title="Delete Event">
-							<IconButton
-								as={Link}
-								aria-label="delete event"
-								onClick={() => deleteEvent(event)}
-							>
-								<DeleteIcon color="primary" />
-							</IconButton>
-						</Tooltip>
+						{cancelled && (
+							<Chip label="Cancelled" color="primary" variant="outlined" />
+						)}
 					</CardActions>
 				</Grid>
 			</Grid>
@@ -96,8 +88,4 @@ const EventItem = ({ event, deleteEvent, history, match }) => {
 	);
 };
 
-const mapDispatchToProps = (dispatch) => ({
-	deleteEvent: (event) => dispatch(deleteEvent(event)),
-});
-
-export default withRouter(connect(null, mapDispatchToProps)(EventItem));
+export default withRouter(EventItem);

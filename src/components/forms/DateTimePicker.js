@@ -12,9 +12,7 @@ const DateTimeInput = (props) => {
 	} = props;
 
 	const onChange = (date) => {
-		Date.parse(date)
-			? inputProps.onChange(date.toISOString())
-			: inputProps.onChange(null);
+		Date.parse(date) ? inputProps.onChange(date) : inputProps.onChange(null);
 	};
 
 	return (
@@ -27,13 +25,9 @@ const DateTimeInput = (props) => {
 				label="Choose Date and Time"
 				inputVariant="outlined"
 				format="dd LLLL yyyy, h:mm aaa OOO"
-				value={value ? new Date(value) : new Date()}
+				value={value ? new Date(value) : null}
 				disabled={submitting}
-				onBlur={() =>
-					onBlur(
-						value ? new Date(value).toISOString() : new Date().toISOString()
-					)
-				}
+				onBlur={() => onBlur(value ? new Date(value) : null)}
 				error={error && touched}
 				onChange={onChange}
 			/>

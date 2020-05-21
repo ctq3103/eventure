@@ -1,13 +1,13 @@
 import {
 	CREATE_EVENT,
 	UPDATE_EVENT,
-	DELETE_EVENT,
 	CREATE_EVENT_SUCCESS,
 	CREATE_EVENT_FAILURE,
 	UPDATE_EVENT_SUCCESS,
 	UPDATE_EVENT_FAILURE,
-	DELETE_EVENT_SUCCESS,
-	DELETE_EVENT_FAILURE,
+	CANCEL_TOGGLE,
+	CANCEL_TOGGLE_SUCCESS,
+	CANCEL_TOGGLE_FAILURE,
 } from './events.types';
 
 export const createEvent = (event, history) => {
@@ -65,27 +65,26 @@ export const updateEventFailure = (error) => {
 	};
 };
 
-export const deleteEvent = (event) => {
+export const cancelToggle = (cancelled, eventId) => {
 	return {
-		type: DELETE_EVENT,
+		type: CANCEL_TOGGLE,
 		payload: {
-			event,
+			cancelled,
+			eventId,
 		},
 	};
 };
 
-export const deleteEventSuccess = (event) => {
+export const cancelToggleSuccess = (cancelled, eventId) => {
 	return {
-		type: DELETE_EVENT_SUCCESS,
-		payload: {
-			event,
-		},
+		type: CANCEL_TOGGLE_SUCCESS,
+		payload: { cancelled, eventId },
 	};
 };
 
-export const deleteEventFailure = (error) => {
+export const cancelToggleFailure = (error) => {
 	return {
-		type: DELETE_EVENT_FAILURE,
+		type: CANCEL_TOGGLE_FAILURE,
 		payload: {
 			error,
 		},

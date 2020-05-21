@@ -46,7 +46,7 @@ const App = ({ location }) => {
 					component={EventForm}
 				/>
 				<Route exact path="/events" component={BrowseEvents} />
-				<Route path="/event/:id" component={EventDetailPage} />
+				<Route exact path="/event/:id" component={EventDetailPage} />
 				<Route exact path="/favorites" component={FavoriteEvents} />
 				<Route exact path="/settings" component={SettingPage} />
 			</Switch>

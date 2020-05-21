@@ -23,7 +23,7 @@ const BrowseEvents = ({ events }) => {
 
 	return (
 		<div className={classes.root}>
-			<Grid container justify="center" alignItems="center" spacing={5}>
+			<Grid container justify="center" alignItems="flex-start" spacing={5}>
 				{events &&
 					events.map((event) => (
 						<Grid

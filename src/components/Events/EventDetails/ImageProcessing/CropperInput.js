@@ -25,7 +25,7 @@ class CropperInput extends Component {
 				style={{ height: 200, width: '100%' }}
 				preview="#img-preview"
 				// Cropper.js options
-				aspectRatio={1}
+				aspectRatio={16 / 9}
 				viewMode={1}
 				dragMode="move"
 				guides={false}

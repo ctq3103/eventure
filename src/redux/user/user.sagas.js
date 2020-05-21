@@ -1,4 +1,4 @@
-import { takeLatest, put, all, call } from 'redux-saga/effects';
+import { takeLatest, put, all, call, select } from 'redux-saga/effects';
 import cuid from 'cuid';
 import firebase, { firestore, auth } from '../../config/firebase';
 import { toastr } from 'react-redux-toastr';
@@ -7,6 +7,8 @@ import {
 	UPLOAD_PHOTO,
 	DELETE_PHOTO,
 	SET_PROFILE_PHOTO,
+	JOIN_EVENT,
+	CANCEL_JOIN_EVENT,
 } from './user.types';
 import {
 	updateProfileSuccess,
@@ -17,6 +19,10 @@ import {
 	deletePhotoFailure,
 	setProfilePhotoFailure,
 	setProfilePhotoSuccess,
+	joinEventSuccess,
+	joinEventFailure,
+	cancelJoinEventSuccess,
+	cancelJoinEventFailure,
 } from './user.actions';
 
 function* updateProfile({ payload: user }) {
@@ -118,11 +124,78 @@ function* onSetProfilePhoto() {
 	yield takeLatest(SET_PROFILE_PHOTO, setProfilePhoto);
 }
 
+function* joinEvent({ payload: { event } }) {
+	const getState = yield select();
+	const user = auth.currentUser;
+	const profile = getState.firebase.profile;
+	const attendee = {
+		going: true,
+		isCreator: false,
+		joinDate: new Date(),
+		name: profile.displayName,
+		photoURL: profile.photoURL,
+	};
+	try {
+		yield firestore
+			.collection('events')
+			.doc(`${event.id}`)
+			.update({
+				[`attendees.${user.uid}`]: attendee,
+			});
+		yield firestore
+			.collection('event_attendee')
+			.doc(`${event.id}_${user.uid}`)
+			.set({
+				eventDate: event.date,
+				eventId: event.id,
+				isCreator: false,
+				userUid: user.uid,
+			});
+		yield put(joinEventSuccess(event));
+		toastr.success('Welcome', 'Join event successfully!');
+	} catch (error) {
+		yield put(joinEventFailure(error));
+		toastr.error('Oops', 'Something went wrong!');
+	}
+}
+
+function* onJoinEvent() {
+	yield takeLatest(JOIN_EVENT, joinEvent);
+}
+
+function* cancelJoinEvent({ payload: { event } }) {
+	const user = auth.currentUser;
+
+	try {
+		yield firestore
+			.collection('events')
+			.doc(`${event.id}`)
+			.update({
+				[`attendees.${user.uid}`]: firebase.firestore.FieldValue.delete(),
+			});
+		yield firestore
+			.collection('event_attendee')
+			.doc(`${event.id}_${user.uid}`)
+			.delete();
+		yield put(cancelJoinEventSuccess(event));
+		toastr.success('Bye bye!', 'Take care and come back another time!');
+	} catch (error) {
+		yield put(cancelJoinEventFailure(error));
+		toastr.error('Oops', 'Something went wrong!');
+	}
+}
+
+function* onCancelJoinEvent() {
+	yield takeLatest(CANCEL_JOIN_EVENT, cancelJoinEvent);
+}
+
 export function* userSagas() {
 	yield all([
 		call(onUpdateProfile),
 		call(onUploadPhoto),
 		call(onDeletePhoto),
 		call(onSetProfilePhoto),
+		call(onJoinEvent),
+		call(onCancelJoinEvent),
 	]);
 }

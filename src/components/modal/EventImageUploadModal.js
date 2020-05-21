@@ -10,6 +10,7 @@ const mapDispatchToProps = { closeModal };
 const EventImageUploadModal = ({ closeModal }) => {
 	return (
 		<Dialog
+			maxWidth="md"
 			open={true}
 			onClose={closeModal}
 			aria-labelledby="signIn-form-modal"
