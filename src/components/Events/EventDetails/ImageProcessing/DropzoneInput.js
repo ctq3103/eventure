@@ -2,8 +2,6 @@ import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-
 import BackupIcon from '@material-ui/icons/Backup';
 import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
 
@@ -13,12 +11,9 @@ const useStyles = makeStyles((theme) => ({
 		flexDirection: 'column',
 		alignItems: 'center',
 		justifyContent: 'center',
-		width: theme.spacing(20),
-		height: theme.spacing(20),
+		width: theme.spacing(30),
+		height: theme.spacing(30),
 		marginTop: theme.spacing(2),
-		'& > *': {
-			margin: theme.spacing(1),
-		},
 	},
 }));
 
@@ -49,12 +44,10 @@ const DropzoneInput = ({ setFiles }) => {
 			<input {...getInputProps()} />
 			{isDragActive ? (
 				<Paper elevation={1} className={classes.paper}>
-					<Typography variant="subtitle1">Drop image here</Typography>
 					<ArrowDropDownCircleIcon color="secondary" fontSize="large" />
 				</Paper>
 			) : (
 				<Paper elevation={5} className={classes.paper}>
-					<Typography variant="subtitle1">Drag and drop image here</Typography>
 					<BackupIcon fontSize="large" color="secondary" />
 				</Paper>
 			)}

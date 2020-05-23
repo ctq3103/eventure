@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { format } from 'date-fns';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -29,14 +30,15 @@ const useStyles = makeStyles((theme) => ({
 
 const FavoriteItem = ({ favItem }) => {
 	const classes = useStyles();
-	const { title, date, creator, imageUrl } = favItem;
+	const { title, date, creator, imageURL } = favItem;
+
 	return (
 		<div className={classes.root}>
 			<Paper className={classes.paper}>
 				<Grid container spacing={4}>
 					<Grid item>
 						<ButtonBase className={classes.image}>
-							<img className={classes.img} alt="complex" src={imageUrl} />
+							<img className={classes.img} alt="complex" src={imageURL} />
 						</ButtonBase>
 					</Grid>
 					<Grid item xs={12} sm container>
@@ -50,9 +52,9 @@ const FavoriteItem = ({ favItem }) => {
 							justify="center"
 						>
 							<Grid item xs>
-								<Typography gutterBottom variant="subtitle2">
-									{date}
-								</Typography>
+								{/* <Typography gutterBottom variant="subtitle2">
+									{format(new Date(date.seconds), 'EEE, MMM dd')}
+								</Typography> */}
 								<Typography variant="body2" gutterBottom>
 									{title}
 								</Typography>

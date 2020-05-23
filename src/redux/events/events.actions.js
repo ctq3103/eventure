@@ -8,6 +8,9 @@ import {
 	CANCEL_TOGGLE,
 	CANCEL_TOGGLE_SUCCESS,
 	CANCEL_TOGGLE_FAILURE,
+	UPLOAD_EVENT_IMAGE,
+	UPLOAD_EVENT_IMAGE_SUCCESS,
+	UPLOAD_EVENT_IMAGE_FAILURE,
 } from './events.types';
 
 export const createEvent = (event, history) => {
@@ -85,6 +88,33 @@ export const cancelToggleSuccess = (cancelled, eventId) => {
 export const cancelToggleFailure = (error) => {
 	return {
 		type: CANCEL_TOGGLE_FAILURE,
+		payload: {
+			error,
+		},
+	};
+};
+
+export const uploadEventImage = (file, fileName, eventId) => {
+	return {
+		type: UPLOAD_EVENT_IMAGE,
+		payload: {
+			file,
+			fileName,
+			eventId,
+		},
+	};
+};
+
+export const uploadEventImageSuccess = (file, fileName, eventId) => {
+	return {
+		type: UPLOAD_EVENT_IMAGE_SUCCESS,
+		payload: { file, fileName, eventId },
+	};
+};
+
+export const uploadEventImageFailure = (error) => {
+	return {
+		type: UPLOAD_EVENT_IMAGE_FAILURE,
 		payload: {
 			error,
 		},

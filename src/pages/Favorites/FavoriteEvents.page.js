@@ -31,7 +31,7 @@ function FavoriteEvents({ favItems }) {
 					>
 						Favorites
 					</Typography>
-					<Grid container>
+					<Grid container spacing={3}>
 						{favItems.length ? (
 							favItems.map((favItem) => (
 								<Grid key={favItem.id} item xs={12} sm={6}>

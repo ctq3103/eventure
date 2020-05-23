@@ -30,14 +30,6 @@ const useStyles = makeStyles((theme) => ({
 	grid: {
 		marginBottom: theme.spacing(2),
 	},
-	card: {
-		//maxWidth: 200,
-		marginTop: theme.spacing(2),
-	},
-	cardPhoto: {
-		height: 0,
-		paddingTop: '100%',
-	},
 	paper: {
 		display: 'flex',
 		flexDirection: 'column',

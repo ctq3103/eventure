@@ -228,17 +228,18 @@ class EventForm extends Component {
 							</Grid>
 
 							{/* toggle will not work if we use setListener for initialValues */}
-
-							<Grid item>
-								<Button
-									variant="outlined"
-									color={event.cancelled ? 'secondary' : 'primary'}
-									onClick={() => cancelToggle(!event.cancelled, event.id)}
-									className={classes.button}
-								>
-									{event.cancelled ? 'Reactivate Event' : 'Cancel Event'}
-								</Button>
-							</Grid>
+							{initialValues && initialValues.id && (
+								<Grid item>
+									<Button
+										variant="outlined"
+										color={event.cancelled ? 'secondary' : 'primary'}
+										onClick={() => cancelToggle(!event.cancelled, event.id)}
+										className={classes.button}
+									>
+										{event.cancelled ? 'Reactivate Event' : 'Cancel Event'}
+									</Button>
+								</Grid>
+							)}
 						</Grid>
 					</form>
 				</div>

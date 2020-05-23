@@ -11,6 +11,7 @@ import EventDetailPage from './pages/Events/EventDetails.page';
 import EventCategory from './pages/Events/EventsByCategory.page';
 import EventForm from './components/Events/EventForm';
 import SettingPage from './pages/Users/SettingPage';
+import EventImageUpload from './components/Events/EventDetails/ImageProcessing/EventImageUpload';
 
 const theme = createMuiTheme({
 	palette: {
@@ -47,6 +48,7 @@ const App = ({ location }) => {
 				/>
 				<Route exact path="/events" component={BrowseEvents} />
 				<Route exact path="/event/:id" component={EventDetailPage} />
+				<Route exact path="/eventImage/:id" component={EventImageUpload} />
 				<Route exact path="/favorites" component={FavoriteEvents} />
 				<Route exact path="/settings" component={SettingPage} />
 			</Switch>

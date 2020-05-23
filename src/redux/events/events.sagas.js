@@ -1,7 +1,12 @@
 import { takeLatest, put, all, call, select } from 'redux-saga/effects';
-import { firestore, auth } from '../../config/firebase';
+import firebase, { firestore, auth } from '../../config/firebase';
 import { toastr } from 'react-redux-toastr';
-import { CREATE_EVENT, UPDATE_EVENT, CANCEL_TOGGLE } from './events.types';
+import {
+	CREATE_EVENT,
+	UPDATE_EVENT,
+	CANCEL_TOGGLE,
+	UPLOAD_EVENT_IMAGE,
+} from './events.types';
 import {
 	createEventSuccess,
 	createEventFailure,
@@ -9,6 +14,8 @@ import {
 	updateEventFailure,
 	cancelToggleSuccess,
 	cancelToggleFailure,
+	uploadEventImageSuccess,
+	uploadEventImageFailure,
 } from './events.actions';
 import { createNewEvent } from '../../utils/helpers';
 import history from '../../history';
@@ -75,7 +82,6 @@ function* cancelToggle({ payload: { cancelled, eventId } }) {
 
 		yield put(cancelToggleSuccess(cancelled, eventId));
 	} catch (error) {
-		console.log(error);
 		yield put(cancelToggleFailure(error));
 	}
 }
@@ -84,6 +90,40 @@ function* onCancelToggle() {
 	yield takeLatest(CANCEL_TOGGLE, cancelToggle);
 }
 
+function* uploadEventImage({ payload: { file, fileName, eventId } }) {
+	const user = auth.currentUser;
+	const path = `${user.uid}/event_images`;
+	const options = {
+		name: fileName,
+	};
+
+	try {
+		//upload file to firebase storage
+		let uploadedFile = yield firebase.uploadFile(path, file, null, options);
+		//get URL of image
+		let downloadURL = yield uploadedFile.uploadTaskSnapshot.ref.getDownloadURL();
+
+		yield firestore.collection('events').doc(`${eventId}`).update({
+			imageURL: downloadURL,
+		});
+		yield put(uploadEventImageSuccess(file, fileName, eventId));
+		history.push(`/event/${eventId}`);
+		toastr.success('Success', 'Event image has been uploaded');
+	} catch (error) {
+		yield put(uploadEventImageFailure(error));
+		toastr.error('Oops', 'Something went wrong');
+	}
+}
+
+function* onUploadEventImage() {
+	yield takeLatest(UPLOAD_EVENT_IMAGE, uploadEventImage);
+}
+
 export function* eventSagas() {
-	yield all([call(onCreateEvent), call(onUpdateEvent), call(onCancelToggle)]);
+	yield all([
+		call(onCreateEvent),
+		call(onUpdateEvent),
+		call(onCancelToggle),
+		call(onUploadEventImage),
+	]);
 }

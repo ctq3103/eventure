@@ -13,6 +13,7 @@ import {
 } from '@material-ui/core';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import Chip from '@material-ui/core/Chip';
+import FavIcon from '../FavIcon';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -52,10 +53,10 @@ const EventDetailInfo = ({
 	isAttendee,
 	joinEvent,
 	cancelJoinEvent,
-	openModal,
 }) => {
 	const classes = useStyles();
 	const {
+		id,
 		title,
 		date,
 		venue,
@@ -64,7 +65,7 @@ const EventDetailInfo = ({
 		creator,
 		cancelled,
 	} = event;
-
+	console.log(date);
 	return (
 		<div className={classes.root}>
 			<Paper elevation={3} className={classes.paper}>
@@ -83,7 +84,7 @@ const EventDetailInfo = ({
 							/>
 
 							<Fab
-								onClick={() => openModal('EventImageUploadModal')}
+								onClick={() => history.push(`/eventImage/${id}`)}
 								color="inherit"
 								aria-label="edit"
 								className={classes.imgBtn}
@@ -103,16 +104,18 @@ const EventDetailInfo = ({
 					>
 						<Grid container item direction="row" justify="space-between">
 							<Grid item>
-								{date && (
-									<Typography variant="subtitle1">
-										{format(date.toDate(), 'MMM dd')}
-									</Typography>
+								{cancelled ? (
+									<Chip label="Cancelled" color="primary" />
+								) : (
+									date && (
+										<Typography variant="h6">
+											{format(date.toDate(), 'MMM dd')}
+										</Typography>
+									)
 								)}
 							</Grid>
 							<Grid item>
-								{cancelled && (
-									<Chip label="Cancelled" color="primary" variant="outlined" />
-								)}
+								<FavIcon event={event} />
 							</Grid>
 						</Grid>
 						<Grid item>
@@ -140,7 +143,7 @@ const EventDetailInfo = ({
 								</Button>
 							)}
 
-							{!isCreator && (
+							{!isCreator && !cancelled && (
 								<>
 									{isAttendee ? (
 										<Button
@@ -187,7 +190,7 @@ const EventDetailInfo = ({
 							{date && (
 								<Typography variant="body1" gutterBottom>
 									{format(date.toDate(), 'EEE, MMM dd')} at{' '}
-									{format(date.toDate(), 'HH:mm')}
+									{format(date.toDate(), 'hh:mm aaa')}
 								</Typography>
 							)}
 						</div>
@@ -207,16 +210,13 @@ const EventDetailInfo = ({
 								</Typography>
 
 								<AvatarGroup max={8}>
-									{attendees.map(
-										(attendee, index) =>
-											!attendee.isCreator && (
-												<Avatar
-													key={attendee.id}
-													alt={attendee.name}
-													src={attendee.photoURL}
-												/>
-											)
-									)}
+									{attendees.map((attendee) => (
+										<Avatar
+											key={attendee.id}
+											alt={attendee.name}
+											src={attendee.photoURL}
+										/>
+									))}
 								</AvatarGroup>
 							</div>
 						)}

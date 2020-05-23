@@ -81,7 +81,6 @@ function* uploadPhoto({ payload: { file, fileName } }) {
 
 		yield put(uploadPhotoSuccess(file, fileName));
 	} catch (error) {
-		console.log(error);
 		yield put(uploadPhotoFailure(error));
 	}
 }

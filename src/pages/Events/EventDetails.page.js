@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withFirestore } from 'react-redux-firebase';
+import { withFirestore, isLoaded } from 'react-redux-firebase';
 import EventDetailInfo from '../../components/Events/EventDetails/EventDetailInfo';
 import { joinEvent, cancelJoinEvent } from '../../redux/user/user.actions';
 import { objectToArray } from '../../utils/helpers';
-import { openModal } from '../../redux/modals/modal.actions';
+import Loading from '../../components/Loading';
 
 class EventDetailPage extends Component {
 	componentDidMount() {
@@ -18,7 +18,19 @@ class EventDetailPage extends Component {
 	}
 
 	render() {
-		const { event, auth, joinEvent, cancelJoinEvent, openModal } = this.props;
+		const {
+			events,
+			event,
+			auth,
+			joinEvent,
+			cancelJoinEvent,
+			requesting,
+		} = this.props;
+
+		const loading = Object.values(requesting).some((item) => item === true);
+
+		if (!isLoaded(events) || !isLoaded(auth) || loading) return <Loading />;
+
 		const attendees =
 			event && event.attendees && objectToArray(event.attendees);
 
@@ -34,7 +46,6 @@ class EventDetailPage extends Component {
 				joinEvent={joinEvent}
 				cancelJoinEvent={cancelJoinEvent}
 				isAttendee={isAttendee}
-				openModal={openModal}
 			/>
 		);
 	}
@@ -43,7 +54,6 @@ class EventDetailPage extends Component {
 const mapDispatchToProps = {
 	joinEvent,
 	cancelJoinEvent,
-	openModal,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -63,7 +73,9 @@ const mapStateToProps = (state, ownProps) => {
 
 	return {
 		event,
+		events: state.firestore.ordered.events,
 		auth: state.firebase.auth,
+		requesting: state.firestore.status.requesting,
 	};
 };
 
