@@ -65,7 +65,6 @@ const EventDetailInfo = ({
 		creator,
 		cancelled,
 	} = event;
-	console.log(date);
 	return (
 		<div className={classes.root}>
 			<Paper elevation={3} className={classes.paper}>
@@ -83,14 +82,16 @@ const EventDetailInfo = ({
 								alt={title}
 							/>
 
-							<Fab
-								onClick={() => history.push(`/eventImage/${id}`)}
-								color="inherit"
-								aria-label="edit"
-								className={classes.imgBtn}
-							>
-								<PhotoCameraIcon />
-							</Fab>
+							{isCreator && (
+								<Fab
+									onClick={() => history.push(`/eventImage/${id}`)}
+									color="inherit"
+									aria-label="event-image"
+									className={classes.imgBtn}
+								>
+									<PhotoCameraIcon />
+								</Fab>
+							)}
 						</div>
 					</Grid>
 
@@ -209,7 +210,7 @@ const EventDetailInfo = ({
 									Attendees
 								</Typography>
 
-								<AvatarGroup max={8}>
+								<AvatarGroup max={5}>
 									{attendees.map((attendee) => (
 										<Avatar
 											key={attendee.id}

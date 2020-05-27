@@ -24,15 +24,23 @@ import {
 	cancelJoinEventSuccess,
 	cancelJoinEventFailure,
 } from './user.actions';
+import {
+	asyncActionStart,
+	asyncActionFinish,
+	asyncActionError,
+} from '../async/async.actions';
 
 function* updateProfile({ payload: user }) {
 	try {
+		yield put(asyncActionStart());
 		yield call(firebase.updateProfile, user);
 		yield put(updateProfileSuccess(user));
 		toastr.success('Success', 'Your profile has been updated');
+		yield put(asyncActionFinish());
 	} catch (error) {
 		yield put(updateProfileFailure(error));
 		toastr.error('Error', 'There is somethign wrong!');
+		yield put(asyncActionError());
 	}
 }
 
@@ -49,6 +57,7 @@ function* uploadPhoto({ payload: { file, fileName } }) {
 	};
 
 	try {
+		yield put(asyncActionStart());
 		//upload file to firebase storage
 		let uploadedFile = yield firebase.uploadFile(path, file, null, options);
 		//get URL of image
@@ -80,8 +89,10 @@ function* uploadPhoto({ payload: { file, fileName } }) {
 			});
 
 		yield put(uploadPhotoSuccess(file, fileName));
+		yield put(asyncActionFinish());
 	} catch (error) {
 		yield put(uploadPhotoFailure(error));
+		yield put(asyncActionError());
 	}
 }
 
@@ -92,13 +103,16 @@ function* onUploadPhoto() {
 function* deletePhoto({ payload: { photo } }) {
 	const user = auth.currentUser;
 	try {
+		yield put(asyncActionStart());
 		yield firebase.deleteFile(`${user.uid}/user_images/${photo.name}`);
 		yield firestore.doc(`users/${user.uid}/photos/${photo.id}`).delete();
 		yield put(deletePhotoSuccess(photo));
 		toastr.success('Success', 'Photo has been deleted');
+		yield put(asyncActionFinish());
 	} catch (error) {
 		yield put(deletePhotoFailure(error));
 		toastr.error('Error', 'Problem deleting photo');
+		yield put(asyncActionError());
 	}
 }
 
@@ -108,14 +122,17 @@ function* onDeletePhoto() {
 
 function* setProfilePhoto({ payload: { photo } }) {
 	try {
+		yield put(asyncActionStart());
 		yield firebase.updateProfile({
 			photoURL: photo.url,
 		});
 		yield put(setProfilePhotoSuccess(photo));
 		toastr.success('Success', 'Profile picture has been set');
+		yield put(asyncActionFinish());
 	} catch (error) {
 		yield put(setProfilePhotoFailure(error));
 		toastr.error('Error', 'Problem setting profile picture');
+		yield put(asyncActionError());
 	}
 }
 
@@ -135,6 +152,7 @@ function* joinEvent({ payload: { event } }) {
 		photoURL: profile.photoURL,
 	};
 	try {
+		yield put(asyncActionStart());
 		yield firestore
 			.collection('events')
 			.doc(`${event.id}`)
@@ -152,9 +170,11 @@ function* joinEvent({ payload: { event } }) {
 			});
 		yield put(joinEventSuccess(event));
 		toastr.success('Welcome', 'Join event successfully!');
+		yield put(asyncActionFinish());
 	} catch (error) {
 		yield put(joinEventFailure(error));
 		toastr.error('Oops', 'Something went wrong!');
+		yield put(asyncActionError());
 	}
 }
 
@@ -166,6 +186,7 @@ function* cancelJoinEvent({ payload: { event } }) {
 	const user = auth.currentUser;
 
 	try {
+		yield put(asyncActionStart());
 		yield firestore
 			.collection('events')
 			.doc(`${event.id}`)
@@ -178,9 +199,11 @@ function* cancelJoinEvent({ payload: { event } }) {
 			.delete();
 		yield put(cancelJoinEventSuccess(event));
 		toastr.success('Bye bye!', 'Take care and come back another time!');
+		yield put(asyncActionFinish());
 	} catch (error) {
 		yield put(cancelJoinEventFailure(error));
 		toastr.error('Oops', 'Something went wrong!');
+		yield put(asyncActionError());
 	}
 }
 

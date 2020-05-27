@@ -11,14 +11,76 @@ import {
 	UPLOAD_EVENT_IMAGE,
 	UPLOAD_EVENT_IMAGE_SUCCESS,
 	UPLOAD_EVENT_IMAGE_FAILURE,
+	FETCH_EVENTS,
+	FETCH_EVENTS_SUCCESS,
+	FETCH_EVENTS_FAILURE,
+	GET_NEXT_EVENTS_FAILURE,
+	GET_NEXT_EVENTS_SUCCESS,
+	GET_NEXT_EVENTS,
 } from './events.types';
 
-export const createEvent = (event, history) => {
+export const fetchEvents = (moreEvents) => {
+	return {
+		type: FETCH_EVENTS,
+		payload: {
+			moreEvents,
+		},
+	};
+};
+
+export const fetchEventsSuccess = (events, moreEvents) => {
+	return {
+		type: FETCH_EVENTS_SUCCESS,
+		payload: {
+			events,
+			moreEvents,
+		},
+	};
+};
+
+export const fetchEventsFailure = (error) => {
+	return {
+		type: FETCH_EVENTS_FAILURE,
+		payload: {
+			error,
+		},
+	};
+};
+
+export const getNextEvents = (lastEvent, moreEvents) => {
+	return {
+		type: GET_NEXT_EVENTS,
+		payload: {
+			lastEvent,
+			moreEvents,
+		},
+	};
+};
+
+export const getNextEventsSuccess = (events, moreEvents) => {
+	return {
+		type: GET_NEXT_EVENTS_SUCCESS,
+		payload: {
+			events,
+			moreEvents,
+		},
+	};
+};
+
+export const getNextEventsFailure = (error) => {
+	return {
+		type: GET_NEXT_EVENTS_FAILURE,
+		payload: {
+			error,
+		},
+	};
+};
+
+export const createEvent = (event) => {
 	return {
 		type: CREATE_EVENT,
 		payload: {
 			event,
-			history,
 		},
 	};
 };

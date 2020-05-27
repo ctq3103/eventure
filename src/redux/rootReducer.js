@@ -8,6 +8,7 @@ import { authReducer } from './auth/auth.reducer';
 import { firebaseReducer } from 'react-redux-firebase';
 import { firestoreReducer } from 'redux-firestore';
 import { favoriteItemReducer } from './favorite/favorite.reducer';
+import { asyncReducer } from './async/async.reducer';
 import { eventsReducer } from './events/events.reducer';
 
 const persistConfig = {
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
 	auth: authReducer,
 	toastr: ToastrReducer,
 	favorite: favoriteItemReducer,
+	async: asyncReducer,
 	events: eventsReducer,
 });
 

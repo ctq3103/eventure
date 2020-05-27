@@ -109,7 +109,9 @@ function Header({ history, auth, profile, dispatch }) {
 			open={isMenuOpen}
 			onClose={handleMenuClose}
 		>
-			<MenuItem>Profile</MenuItem>
+			<MenuItem component={NavLink} to={`/profile/${auth.uid}`}>
+				Profile
+			</MenuItem>
 			<MenuItem component={NavLink} exact to="/settings">
 				Settings
 			</MenuItem>
@@ -131,7 +133,7 @@ function Header({ history, auth, profile, dispatch }) {
 		>
 			{authenticated ? (
 				<div>
-					<MenuItem>
+					<MenuItem component={NavLink} exact to="/createEvent">
 						<IconButton color="inherit">
 							<CreateIcon />
 						</IconButton>
@@ -146,6 +148,7 @@ function Header({ history, auth, profile, dispatch }) {
 
 					<MenuItem onClick={handleProfileMenuOpen}>
 						<Button
+							onClick={() => history.push(`/profile/${auth.uid}`)}
 							aria-label="account of current user"
 							aria-controls="primary-search-account-menu"
 							aria-haspopup="true"
@@ -178,7 +181,7 @@ function Header({ history, auth, profile, dispatch }) {
 	);
 
 	return (
-		<div style={{ marginBottom: '2em' }} className={classes.grow}>
+		<div className={classes.grow}>
 			<AppBar color="transparent" position="static">
 				<Toolbar>
 					<Typography

@@ -1,11 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Grid, makeStyles, Typography } from '@material-ui/core';
-import EventItem from '../../components/Events/EventItem.BrowseEventPage';
-import { useFirestoreConnect, isLoaded } from 'react-redux-firebase';
+import { compose } from 'redux';
+import { Grid, Typography, withStyles } from '@material-ui/core';
+import EventList from '../../components/Events/EventList';
 import Loading from '../../components/Loading';
+import { fetchEvents, getNextEvents } from '../../redux/events/events.actions';
 
-const useStyles = makeStyles((theme) => ({
+const styles = (theme) => ({
 	root: {
 		flexGrow: 1,
 		margin: theme.spacing(10),
@@ -14,39 +15,74 @@ const useStyles = makeStyles((theme) => ({
 	typography: {
 		marginBottom: theme.spacing(10),
 	},
-}));
+});
 
-const BrowseEvents = ({ events, requesting }) => {
-	const classes = useStyles();
+class BrowseEvents extends React.Component {
+	state = {
+		loadedEvents: [],
+		loadingInitial: true,
+	};
 
-	useFirestoreConnect([{ collection: 'events' }]);
+	componentDidMount() {
+		this.props.fetchEvents();
+	}
 
-	const loading = Object.values(requesting).some((item) => item === true);
+	componentDidUpdate = (prevProps, prevState) => {
+		if (this.props.events !== prevProps.events) {
+			let filteredEvents = [
+				...prevState.loadedEvents,
+				...this.props.events,
+			].filter((event) => typeof event.date.toDate === 'function');
+			this.setState({
+				loadedEvents: filteredEvents,
+				loadingInitial: false,
+			});
+		}
+	};
 
-	if (!isLoaded(events) || loading) return <Loading />;
-	return (
-		<div className={classes.root}>
-			<Grid container justify="center" alignItems="center">
-				<Typography className={classes.typography} variant="h4" color="inherit">
-					ALL EVENTS
-				</Typography>
-			</Grid>
+	render() {
+		const { classes, events, loading, getNextEvents, moreEvents } = this.props;
+		const { loadedEvents, loadingInitial } = this.state;
 
-			<Grid container justify="center" alignItems="stretch" spacing={5}>
-				{events &&
-					events.map((event) => (
-						<Grid item xs={12} sm={6} md={3} key={event.id}>
-							<EventItem event={event} />
-						</Grid>
-					))}
-			</Grid>
-		</div>
-	);
+		if (loadingInitial) return <Loading />;
+
+		let lastEvent = events && events[events.length - 1];
+
+		return (
+			<div className={classes.root}>
+				<Grid container justify="center" alignItems="center">
+					<Typography
+						className={classes.typography}
+						variant="h4"
+						color="inherit"
+					>
+						ALL EVENTS
+					</Typography>
+				</Grid>
+
+				<EventList
+					moreEvents={moreEvents}
+					loading={loading}
+					events={loadedEvents}
+					getNextEvents={getNextEvents}
+					lastEvent={lastEvent}
+				/>
+			</div>
+		);
+	}
+}
+
+const mapDispatchToProps = {
+	fetchEvents,
+	getNextEvents,
 };
 
 const mapStateToProps = (state) => ({
-	events: state.firestore.ordered.events,
-	requesting: state.firestore.status.requesting,
+	events: state.events.events,
+	loading: state.async.loading,
+	moreEvents: state.events.moreEvents,
 });
 
-export default connect(mapStateToProps)(BrowseEvents);
+export default compose(withStyles(styles, { withTheme: true }))(
+	connect(mapStateToProps, mapDispatchToProps)(BrowseEvents)
+);

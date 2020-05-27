@@ -1,14 +1,11 @@
-import { CREATE_EVENT, UPDATE_EVENT } from './events.types';
+import { FETCH_EVENTS_SUCCESS, GET_NEXT_EVENTS_SUCCESS } from './events.types';
 
-export const eventsReducer = (state = [], action) => {
+export const eventsReducer = (state = {}, action) => {
 	switch (action.type) {
-		case CREATE_EVENT:
-			return [...state, action.payload.event];
-		case UPDATE_EVENT:
-			return [
-				...state.filter((event) => event.id !== action.payload.event.id),
-				action.payload.event,
-			];
+		case FETCH_EVENTS_SUCCESS:
+			return action.payload;
+		case GET_NEXT_EVENTS_SUCCESS:
+			return action.payload;
 		default:
 			return state;
 	}
