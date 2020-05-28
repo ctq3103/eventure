@@ -46,6 +46,7 @@ function* registerUser({ payload: { email, password, displayName } }) {
 			displayName: displayName,
 			email: email,
 			createdAt: new Date(),
+			photoURL: require('../../assets/user.png'),
 		};
 
 		yield firestore

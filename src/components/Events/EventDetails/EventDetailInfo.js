@@ -1,5 +1,5 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { format } from 'date-fns';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import {
@@ -43,6 +43,15 @@ const useStyles = makeStyles((theme) => ({
 	detailedInfo: {
 		marginBottom: theme.spacing(5),
 	},
+	link: {
+		textDecoration: 'none',
+		'&:hover': {
+			textDecoration: 'underline',
+		},
+		'&:visited': {
+			textDecoration: 'none',
+		},
+	},
 }));
 
 const EventDetailInfo = ({
@@ -63,6 +72,7 @@ const EventDetailInfo = ({
 		imageURL,
 		description,
 		creator,
+		creatorUid,
 		cancelled,
 	} = event;
 	return (
@@ -123,13 +133,16 @@ const EventDetailInfo = ({
 							<Typography gutterBottom variant="h5">
 								{title}
 							</Typography>
-							<Typography
-								gutterBottom
-								variant="subtitle1"
-								color="textSecondary"
-							>
-								by {creator}
-							</Typography>
+
+							<Link to={`/profile/${creatorUid}`} className={classes.link}>
+								<Typography
+									gutterBottom
+									variant="subtitle1"
+									color="textSecondary"
+								>
+									by {creator}
+								</Typography>
+							</Link>
 						</Grid>
 						<Grid item>
 							{isCreator && (

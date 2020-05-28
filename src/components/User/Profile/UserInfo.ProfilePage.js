@@ -25,15 +25,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const UserInfo = ({ profile }) => {
-	const { photoURL, displayName } = profile;
 	const classes = useStyles();
 
 	return (
 		<div className={classes.root}>
 			<Paper variant="outlined" className={classes.info}>
-				<Avatar alt={displayName} src={photoURL} className={classes.avatar} />
+				{profile.photoURL && (
+					<Avatar
+						alt={profile.displayName}
+						src={profile.photoURL}
+						className={classes.avatar}
+					/>
+				)}
+
 				<Typography color="inherit" variant="h6">
-					{displayName}
+					{profile.displayName}
 				</Typography>
 			</Paper>
 		</div>

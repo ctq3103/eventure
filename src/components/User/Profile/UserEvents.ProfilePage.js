@@ -1,10 +1,15 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
+import Grid from '@material-ui/core/Grid';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import UserEventItem from './UserEventItem';
+import { getUserEvents } from '../../../redux/user/user.actions';
+import { CircularProgress } from '@material-ui/core';
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -17,11 +22,7 @@ function TabPanel(props) {
 			aria-labelledby={`full-width-tab-${index}`}
 			{...other}
 		>
-			{value === index && (
-				<Box>
-					<Typography>{children}</Typography>
-				</Box>
-			)}
+			{value === index && <Box>{children}</Box>}
 		</div>
 	);
 }
@@ -32,10 +33,10 @@ TabPanel.propTypes = {
 	value: PropTypes.any.isRequired,
 };
 
-function a11yProps(index) {
+function a11yProps(key) {
 	return {
-		id: `full-width-tab-${index}`,
-		'aria-controls': `full-width-tabpanel-${index}`,
+		id: `full-width-tab-${key}`,
+		'aria-controls': `full-width-tabpanel-${key}`,
 	};
 }
 
@@ -46,17 +47,25 @@ const useStyles = makeStyles((theme) => ({
 	},
 	tabs: {
 		borderBottom: `1px solid ${theme.palette.divider}`,
-		marginBottom: theme.spacing(3),
+		marginBottom: theme.spacing(5),
 	},
 }));
 
-const UserEvents = () => {
+const panes = [
+	{ label: 'All Events', key: 'allEvents' },
+	{ label: 'Past Events', key: 'pastEvents' },
+	{ label: 'Future Events', key: 'futureEvents' },
+	{ label: 'Own Events', key: 'ownEvents' },
+];
+
+const UserEvents = ({ events, loading, getUserEvents, userUid }) => {
 	const classes = useStyles();
 	const theme = useTheme();
 	const [value, setValue] = React.useState(0);
 
 	const handleChange = (event, newValue) => {
 		setValue(newValue);
+		getUserEvents(userUid, newValue);
 	};
 
 	return (
@@ -69,22 +78,46 @@ const UserEvents = () => {
 				textColor="secondary"
 				variant="fullWidth"
 			>
-				<Tab label="Item One" {...a11yProps(0)} />
-				<Tab label="Item Two" {...a11yProps(1)} />
-				<Tab label="Item Three" {...a11yProps(2)} />
+				{panes.map((pane, index) => (
+					<Tab key={index} label={pane.label} {...a11yProps(index)} />
+				))}
 			</Tabs>
 
-			<TabPanel value={value} index={0} dir={theme.direction}>
-				Item One
-			</TabPanel>
-			<TabPanel value={value} index={1} dir={theme.direction}>
-				Item Two
-			</TabPanel>
-			<TabPanel value={value} index={2} dir={theme.direction}>
-				Item Three
-			</TabPanel>
+			{panes.map((pane, index) => (
+				<TabPanel value={value} index={index} key={index} dir={theme.direction}>
+					{loading ? (
+						<CircularProgress color="secondary" />
+					) : (
+						<Grid container justify="center" alignItems="stretch" spacing={2}>
+							{events.length !== 0 ? (
+								events.map(
+									(event) =>
+										typeof event.date.toDate === 'function' && (
+											<Grid key={event.id} item xs={12} sm={6}>
+												<UserEventItem event={event} />
+											</Grid>
+										)
+								)
+							) : (
+								<Typography varianr="subtitle1">No event to show</Typography>
+							)}
+						</Grid>
+					)}
+				</TabPanel>
+			))}
 		</div>
 	);
 };
 
-export default UserEvents;
+const mapDispatchToProps = {
+	getUserEvents,
+};
+
+const mapStateToProps = (state) => {
+	return {
+		events: state.events.events,
+		loading: state.async.loading,
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserEvents);

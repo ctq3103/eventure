@@ -154,7 +154,8 @@ function Header({ history, auth, profile, dispatch }) {
 							aria-haspopup="true"
 							color="inherit"
 						>
-							{profile.photoURL ? (
+							{profile.photoURL &&
+							profile.photoURL !== '/static/media/user.666893a2.png' ? (
 								<Avatar alt={profile.displayName} src={profile.photoURL} />
 							) : (
 								<AccountCircle />

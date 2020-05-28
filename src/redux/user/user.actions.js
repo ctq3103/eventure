@@ -17,6 +17,9 @@ import {
 	CANCEL_JOIN_EVENT,
 	CANCEL_JOIN_EVENT_SUCCESS,
 	CANCEL_JOIN_EVENT_FAILURE,
+	GET_USER_EVENTS,
+	GET_USER_EVENTS_SUCCESS,
+	GET_USER_EVENTS_FAILURE,
 } from './user.types';
 
 export const updateProfile = (user) => {
@@ -141,6 +144,27 @@ export const cancelJoinEventSuccess = (event) => {
 export const cancelJoinEventFailure = (error) => {
 	return {
 		type: CANCEL_JOIN_EVENT_FAILURE,
+		payload: error,
+	};
+};
+
+export const getUserEvents = (userUid, activeTab) => {
+	return {
+		type: GET_USER_EVENTS,
+		payload: { userUid, activeTab },
+	};
+};
+
+export const getUserEventsSuccess = (userUid, activeTab) => {
+	return {
+		type: GET_USER_EVENTS_SUCCESS,
+		payload: { userUid, activeTab },
+	};
+};
+
+export const getUserEventsFailure = (error) => {
+	return {
+		type: GET_USER_EVENTS_FAILURE,
 		payload: error,
 	};
 };

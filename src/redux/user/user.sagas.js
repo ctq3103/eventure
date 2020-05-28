@@ -9,6 +9,7 @@ import {
 	SET_PROFILE_PHOTO,
 	JOIN_EVENT,
 	CANCEL_JOIN_EVENT,
+	GET_USER_EVENTS,
 } from './user.types';
 import {
 	updateProfileSuccess,
@@ -23,12 +24,15 @@ import {
 	joinEventFailure,
 	cancelJoinEventSuccess,
 	cancelJoinEventFailure,
+	getUserEventsFailure,
+	getUserEventsSuccess,
 } from './user.actions';
 import {
 	asyncActionStart,
 	asyncActionFinish,
 	asyncActionError,
 } from '../async/async.actions';
+import { fetchEventsSuccess } from '../events/events.actions';
 
 function* updateProfile({ payload: user }) {
 	try {
@@ -211,6 +215,61 @@ function* onCancelJoinEvent() {
 	yield takeLatest(CANCEL_JOIN_EVENT, cancelJoinEvent);
 }
 
+function* getUserEvents({ payload: { userUid, activeTab } }) {
+	const today = new Date();
+	let eventsRef = firestore.collection('event_attendee');
+
+	let query;
+	switch (activeTab) {
+		case 1: //past events
+			query = yield eventsRef
+				.where('userUid', '==', userUid)
+				.where('eventDate', '<=', today)
+				.orderBy('eventDate', 'desc');
+			break;
+		case 2: //future events
+			query = yield eventsRef
+				.where('userUid', '==', userUid)
+				.where('eventDate', '>=', today)
+				.orderBy('eventDate');
+			break;
+		case 3: //future events
+			query = yield eventsRef
+				.where('userUid', '==', userUid)
+				.where('isCreator', '==', true)
+				.orderBy('eventDate', 'desc');
+			break;
+		default:
+			query = yield eventsRef
+				.where('userUid', '==', userUid)
+				.orderBy('eventDate', 'desc');
+	}
+	try {
+		yield put(asyncActionStart());
+		let querySnapshot = yield query.get();
+		let events = [];
+
+		for (let i = 0; i < querySnapshot.docs.length; i++) {
+			let evt = yield firestore
+				.collection('events')
+				.doc(querySnapshot.docs[i].data().eventId)
+				.get();
+			events.push({ ...evt.data(), id: evt.id });
+		}
+
+		yield put(fetchEventsSuccess(events));
+		yield put(getUserEventsSuccess(userUid, activeTab));
+		yield put(asyncActionFinish());
+	} catch (error) {
+		yield put(getUserEventsFailure(error));
+		yield put(asyncActionError());
+	}
+}
+
+function* onGetUserEvents() {
+	yield takeLatest(GET_USER_EVENTS, getUserEvents);
+}
+
 export function* userSagas() {
 	yield all([
 		call(onUpdateProfile),
@@ -219,5 +278,6 @@ export function* userSagas() {
 		call(onSetProfilePhoto),
 		call(onJoinEvent),
 		call(onCancelJoinEvent),
+		call(onGetUserEvents),
 	]);
 }

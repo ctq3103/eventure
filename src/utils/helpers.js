@@ -3,13 +3,13 @@ export const createNewEvent = (user, photoURL, event) => {
 		...event,
 		creatorUid: user.uid,
 		creator: user.displayName,
-		creatorPhotoURL: photoURL || '../assets/user.png',
+		creatorPhotoURL: photoURL || require('../assets/user.png'),
 		createdAt: new Date(),
 		attendees: {
 			[user.uid]: {
 				going: true,
 				joinDate: new Date(),
-				photoURL: photoURL || './assets/user.png',
+				photoURL: photoURL || require('../assets/user.png'),
 				name: user.displayName,
 				isCreator: true,
 			},
