@@ -10,7 +10,7 @@ import Chip from '@material-ui/core/Chip';
 
 const useStyles = makeStyles((theme) => ({
 	card: {
-		maxWidth: 350,
+		maxWidth: 250,
 		height: '100%',
 	},
 	link: {

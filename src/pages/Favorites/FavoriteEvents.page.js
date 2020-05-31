@@ -1,57 +1,100 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
-import { makeStyles } from '@material-ui/core/styles';
+import { compose } from 'redux';
+import { withFirestore } from 'react-redux-firebase';
+import { withStyles } from '@material-ui/core/styles';
 import { Grid, Typography } from '@material-ui/core';
+import {
+	addToFavorites,
+	removeFromFavorites,
+	getUserFavorites,
+} from '../../redux/favorite/favorite.actions';
 import FavoriteItem from '../../components/Favorite/FavoriteItem';
-import { selectFavItems } from '../../redux/favorite/favorite.selectors';
+import Loading from '../../components/Loading';
 
-const useStyles = makeStyles((theme) => ({
+const styles = (theme) => ({
 	root: {
 		flexGrow: 1,
-		margin: theme.spacing(5),
+		margin: theme.spacing(10),
+		color: theme.palette.text.secondary,
 	},
-
 	typography: {
-		marginBottom: theme.spacing(4),
-		marginTop: theme.spacing(4),
+		marginBottom: theme.spacing(10),
 	},
-}));
+});
 
-function FavoriteEvents({ favItems }) {
-	const classes = useStyles();
-	return (
-		<div className={classes.root}>
-			<Grid container justify="center" alignItems="center" spacing={3}>
-				<Grid item xs={12}>
+class FavoriteEvents extends React.Component {
+	async componentDidMount() {
+		const { auth, getUserFavorites } = this.props;
+		await getUserFavorites(auth.uid);
+	}
+
+	render() {
+		const {
+			classes,
+			auth,
+			favorites,
+			requesting,
+			loading,
+			addToFavorites,
+			removeFromFavorites,
+		} = this.props;
+
+		const isRequesting = Object.values(requesting).some(
+			(data) => data === true
+		);
+		if (loading || isRequesting) return <Loading />;
+
+		return (
+			<div className={classes.root}>
+				<Grid container justify="center" alignItems="center">
 					<Typography
 						className={classes.typography}
 						variant="h4"
-						color="primary"
+						color="inherit"
 					>
-						Favorites
+						FAVORITES
 					</Typography>
-					<Grid container spacing={3}>
-						{favItems.length ? (
-							favItems.map((favItem) => (
-								<Grid key={favItem.id} item xs={12} sm={6}>
-									<FavoriteItem favItem={favItem} />
-								</Grid>
-							))
-						) : (
-							<Typography className={classes.typography} variant="h4">
-								No favorite
-							</Typography>
-						)}
-					</Grid>
 				</Grid>
-			</Grid>
-		</div>
-	);
+				<Grid container spacing={3} justify="center" alignItems="center">
+					{favorites.length ? (
+						favorites.map((event) => (
+							<Grid key={event.id} item xs={12} sm={6}>
+								<FavoriteItem
+									auth={auth}
+									event={event}
+									addToFavorites={addToFavorites}
+									removeFromFavorites={removeFromFavorites}
+								/>
+							</Grid>
+						))
+					) : (
+						<Typography className={classes.typography} variant="h6">
+							No favorite
+						</Typography>
+					)}
+				</Grid>
+			</div>
+		);
+	}
 }
 
-const mapStateToProps = createStructuredSelector({
-	favItems: selectFavItems,
-});
+const mapDispatchToProps = {
+	addToFavorites,
+	removeFromFavorites,
+	getUserFavorites,
+};
 
-export default connect(mapStateToProps)(FavoriteEvents);
+const mapStateToProps = (state) => {
+	return {
+		auth: state.firebase.auth,
+		loading: state.async.loading,
+		favorites: state.favorites,
+		requesting: state.firestore.status.requesting,
+	};
+};
+
+export default compose(
+	withStyles(styles, { withTheme: true }),
+	withFirestore
+)(connect(mapStateToProps, mapDispatchToProps)(FavoriteEvents));

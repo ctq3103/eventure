@@ -52,16 +52,6 @@ function* fetchEvents({ payload: { moreEvents } }) {
 
 		let querySnapshot = yield query.get();
 
-		// if (
-		// 	querySnapshot &&
-		// 	querySnapshot.docs &&
-		// 	querySnapshot.docs.length === 0
-		// ) {
-		// 	yield put(asyncActionFinish());
-		// 	moreEvents = false;
-		// 	yield put(fetchEventsSuccess(moreEvents));
-		// }
-
 		let events = [];
 		for (let i = 0; i < querySnapshot.docs.length; i++) {
 			let evt = {

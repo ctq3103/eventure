@@ -1,20 +1,25 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { compose } from 'redux';
+import { withFirestore } from 'react-redux-firebase';
+import { Link } from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
 import { format } from 'date-fns';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import ButtonBase from '@material-ui/core/ButtonBase';
-import FavIcon from './FavIcon';
+import FavoriteButton from '../Events/FavoriteButton';
+import { objectToArray } from '../../utils/helpers';
 
-const useStyles = makeStyles((theme) => ({
+const styles = (theme) => ({
 	root: {
 		flexGrow: 1,
 	},
 	paper: {
+		display: 'flex',
 		padding: theme.spacing(2),
-		margin: 'auto',
 		maxWidth: 500,
+		height: '100%',
 	},
 	image: {
 		width: 128,
@@ -26,19 +31,44 @@ const useStyles = makeStyles((theme) => ({
 		maxWidth: '100%',
 		maxHeight: '100%',
 	},
-}));
+	link: {
+		textDecoration: 'none',
+		color: theme.palette.text.primary,
+	},
+});
 
-const FavoriteItem = ({ favItem }) => {
-	const classes = useStyles();
-	const { title, date, creator, imageURL } = favItem;
+class FavoriteItem extends React.Component {
+	render() {
+		const {
+			classes,
+			auth,
+			event,
+			addToFavorites,
+			removeFromFavorites,
+		} = this.props;
 
-	return (
-		<div className={classes.root}>
-			<Paper className={classes.paper}>
-				<Grid container spacing={4}>
+		const { title, date, imageURL, id, creator } = event;
+
+		const favorites =
+			event && event.favorites && objectToArray(event.favorites);
+
+		const isInFavorites =
+			favorites && favorites.some((user) => user.id === auth.uid);
+
+		return (
+			<Paper elevator={0} className={classes.paper}>
+				<Grid container spacing={4} alignItems="center" justify="center">
 					<Grid item>
 						<ButtonBase className={classes.image}>
-							<img className={classes.img} alt="complex" src={imageURL} />
+							<img
+								className={classes.img}
+								src={
+									imageURL
+										? imageURL
+										: require('../../assets/event-img-placeholder.jpg')
+								}
+								alt={title}
+							/>
 						</ButtonBase>
 					</Grid>
 					<Grid item xs={12} sm container>
@@ -52,9 +82,12 @@ const FavoriteItem = ({ favItem }) => {
 							justify="center"
 						>
 							<Grid item xs>
-								{/* <Typography gutterBottom variant="subtitle2">
-									{format(new Date(date.seconds), 'EEE, MMM dd')}
-								</Typography> */}
+								{date && typeof date.toDate === 'function' && (
+									<Typography variant="body2" align="left" color="primary">
+										{format(date.toDate(), 'EEE, MMM dd')} at{' '}
+										{format(date.toDate(), 'hh:mm aaa')}
+									</Typography>
+								)}
 								<Typography variant="body2" gutterBottom>
 									{title}
 								</Typography>
@@ -63,19 +96,25 @@ const FavoriteItem = ({ favItem }) => {
 								</Typography>
 							</Grid>
 							<Grid item>
-								<Typography variant="body2" style={{ cursor: 'pointer' }}>
-									View details
-								</Typography>
+								<Link to={`/event/${id}`} className={classes.link}>
+									<Typography variant="body2">View details</Typography>
+								</Link>
 							</Grid>
 						</Grid>
-						<Grid item>
-							<FavIcon favItem={favItem} />
-						</Grid>
+						<FavoriteButton
+							addToFavorites={addToFavorites}
+							removeFromFavorites={removeFromFavorites}
+							isInFavorites={isInFavorites}
+							event={event}
+						/>
 					</Grid>
 				</Grid>
 			</Paper>
-		</div>
-	);
-};
+		);
+	}
+}
 
-export default FavoriteItem;
+export default compose(
+	withStyles(styles, { withTheme: true }),
+	withFirestore
+)(FavoriteItem);

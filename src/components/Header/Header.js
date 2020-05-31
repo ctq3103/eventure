@@ -141,7 +141,7 @@ function Header({ history, auth, profile, dispatch }) {
 					</MenuItem>
 					<MenuItem>
 						<IconButton color="inherit">
-							<FavoriteIconNav />
+							<FavoriteIconNav auth={auth} />
 						</IconButton>
 						<p>Favorites</p>
 					</MenuItem>
@@ -228,7 +228,7 @@ function Header({ history, auth, profile, dispatch }) {
 										to="/favorites"
 										className={classes.button}
 									>
-										<FavoriteIconNav />
+										<FavoriteIconNav auth={auth} />
 									</IconButton>
 								</Tooltip>
 

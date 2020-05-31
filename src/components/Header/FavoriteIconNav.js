@@ -1,20 +1,33 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
 import { Badge } from '@material-ui/core';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
-import { selectFavItemsCount } from '../../redux/favorite/favorite.selectors';
+import { getUserFavorites } from '../../redux/favorite/favorite.actions';
 
-const FavoriteIconNav = ({ favItemsCount }) => {
-	return (
-		<Badge badgeContent={favItemsCount} color="primary">
-			<FavoriteBorderIcon />
-		</Badge>
-	);
+class FavoriteIconNav extends React.Component {
+	componentDidMount() {
+		const { getUserFavorites, auth } = this.props;
+		getUserFavorites(auth.uid);
+	}
+
+	render() {
+		const { favorites } = this.props;
+		return (
+			<Badge badgeContent={favorites.length} color="primary">
+				<FavoriteBorderIcon />
+			</Badge>
+		);
+	}
+}
+
+const mapDispatchToProps = {
+	getUserFavorites,
 };
 
-const mapStateToProps = createStructuredSelector({
-	favItemsCount: selectFavItemsCount,
-});
+const mapStateToProps = (state) => {
+	return {
+		favorites: state.favorites,
+	};
+};
 
-export default connect(mapStateToProps)(FavoriteIconNav);
+export default connect(mapStateToProps, mapDispatchToProps)(FavoriteIconNav);

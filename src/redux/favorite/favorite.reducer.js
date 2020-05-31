@@ -1,24 +1,17 @@
-import { TOGGLE_ADD_FAV_ITEM, CLEAR_FAV_ITEM } from './favorite.types';
-import { toggleAddRemoveItem } from './favorite.utils';
+import {
+	GET_USER_FAVORITES_SUCCESS,
+	REMOVE_FROM_FAVORITES_SUCCESS,
+	ADD_TO_FAVORITES_SUCCESS,
+} from './favorite.types';
 
-const INITIAL_STATE = {
-	favItems: [],
-};
-
-export const favoriteItemReducer = (state = INITIAL_STATE, action) => {
+export const favoritesReducer = (state = [], action) => {
 	switch (action.type) {
-		case TOGGLE_ADD_FAV_ITEM:
-			return {
-				...state,
-				favItems: toggleAddRemoveItem(state.favItems, action.payload),
-			};
-		case CLEAR_FAV_ITEM:
-			return {
-				...state,
-				favItems: state.favItems.filter(
-					(item) => item.id !== action.payload.id
-				),
-			};
+		case GET_USER_FAVORITES_SUCCESS:
+			return action.payload.events;
+		case ADD_TO_FAVORITES_SUCCESS:
+			return [...state, action.payload.event];
+		case REMOVE_FROM_FAVORITES_SUCCESS:
+			return [...state.filter((item) => item.id !== action.payload.event.id)];
 		default:
 			return state;
 	}

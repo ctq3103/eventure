@@ -1,6 +1,3 @@
-//s_16.2.1
-//initialValues={user}
-
 import React from 'react';
 import { addYears } from 'date-fns';
 import { Field, reduxForm } from 'redux-form';

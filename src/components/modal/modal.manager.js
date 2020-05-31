@@ -2,10 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import SignInModal from './SignInModal';
 import RegisterModal from './RegisterModal';
+import UnauthModal from './UnauthModal';
 
 const modalLookup = {
 	SignInModal,
 	RegisterModal,
+	UnauthModal,
 };
 
 const mapStateToProps = (state) => ({

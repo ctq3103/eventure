@@ -4,16 +4,16 @@ import { format } from 'date-fns';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import {
 	Typography,
-	Button,
 	Fab,
 	Grid,
 	Avatar,
 	makeStyles,
 	Paper,
+	Chip,
 } from '@material-ui/core';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
-import Chip from '@material-ui/core/Chip';
-import FavIcon from '../FavIcon';
+import FavoriteButton from '../FavoriteButton';
+import EventDetailButton from './EventDetailButton';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -62,6 +62,12 @@ const EventDetailInfo = ({
 	isAttendee,
 	joinEvent,
 	cancelJoinEvent,
+	addToFavorites,
+	removeFromFavorites,
+	isInFavorites,
+	authenticated,
+	openModal,
+	dispatch,
 }) => {
 	const classes = useStyles();
 	const {
@@ -125,9 +131,15 @@ const EventDetailInfo = ({
 									)
 								)}
 							</Grid>
-							<Grid item>
-								<FavIcon event={event} />
-							</Grid>
+
+							{authenticated && (
+								<FavoriteButton
+									event={event}
+									addToFavorites={addToFavorites}
+									removeFromFavorites={removeFromFavorites}
+									isInFavorites={isInFavorites}
+								/>
+							)}
 						</Grid>
 						<Grid item>
 							<Typography gutterBottom variant="h5">
@@ -144,45 +156,18 @@ const EventDetailInfo = ({
 								</Typography>
 							</Link>
 						</Grid>
-						<Grid item>
-							{isCreator && (
-								<Button
-									onClick={() => history.push(`/manage/${event.id}`)}
-									fullWidth
-									variant="contained"
-									color="primary"
-									size="large"
-								>
-									MANAGE EVENT
-								</Button>
-							)}
 
-							{!isCreator && !cancelled && (
-								<>
-									{isAttendee ? (
-										<Button
-											fullWidth
-											variant="contained"
-											color="inherit"
-											size="large"
-											onClick={() => cancelJoinEvent(event)}
-										>
-											CANCEL MY PLACE
-										</Button>
-									) : (
-										<Button
-											fullWidth
-											variant="contained"
-											color="secondary"
-											size="large"
-											onClick={() => joinEvent(event)}
-										>
-											JOIN EVENT
-										</Button>
-									)}
-								</>
-							)}
-						</Grid>
+						<EventDetailButton
+							isCreator={isCreator}
+							event={event}
+							cancelled={cancelled}
+							isAttendee={isAttendee}
+							joinEvent={joinEvent}
+							cancelJoinEvent={cancelJoinEvent}
+							openModal={openModal}
+							dispatch={dispatch}
+							authenticated={authenticated}
+						/>
 					</Grid>
 
 					{/* Body - Detail Info */}

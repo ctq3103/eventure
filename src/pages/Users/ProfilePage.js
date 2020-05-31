@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { firestoreConnect, isEmpty } from 'react-redux-firebase';
+import { isEmpty, withFirestore } from 'react-redux-firebase';
 import { compose } from 'redux';
 import { Grid, Divider, withStyles } from '@material-ui/core';
 import UserEvents from '../../components/User/Profile/UserEvents.ProfilePage';
@@ -18,7 +18,8 @@ const styles = (theme) => ({
 
 class ProfilePage extends React.Component {
 	componentDidMount() {
-		this.props.getUserEvents(this.props.userUid);
+		const { userUid, getUserEvents } = this.props;
+		getUserEvents(userUid);
 	}
 
 	render() {
@@ -29,7 +30,6 @@ class ProfilePage extends React.Component {
 		);
 		if (isRequesting) return <Loading />;
 
-		if (!profile) return <Loading />;
 		return (
 			<div className={classes.root}>
 				<UserInfo profile={profile} />
@@ -79,5 +79,5 @@ const mapStateToProps = (state, ownProps) => {
 
 export default compose(
 	withStyles(styles, { withTheme: true }),
-	firestoreConnect(() => ['users'])
+	withFirestore
 )(connect(mapStateToProps, mapDispatchToProps)(ProfilePage));

@@ -18,6 +18,7 @@ import {
 	updatePasswordSuccess,
 	updatePasswordFailure,
 } from './auth.actions';
+import history from '../../history';
 
 function* signInWithEmail({ payload: { email, password } }) {
 	try {
@@ -93,6 +94,7 @@ function* socialSignIn({ payload: selectedProvider }) {
 		}
 
 		yield put(signInSuccess(user));
+		history.goBack();
 	} catch (error) {
 		yield put(signInFailure(error));
 	}

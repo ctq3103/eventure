@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import UserEventItem from './UserEventItem';
+import EventItem from '../../Events/EventItem';
 import { getUserEvents } from '../../../redux/user/user.actions';
 import { CircularProgress } from '@material-ui/core';
 
@@ -58,7 +58,7 @@ const panes = [
 	{ label: 'Own Events', key: 'ownEvents' },
 ];
 
-const UserEvents = ({ events, loading, getUserEvents, userUid }) => {
+const UserEvents = ({ events, auth, loading, getUserEvents, userUid }) => {
 	const classes = useStyles();
 	const theme = useTheme();
 	const [value, setValue] = React.useState(0);
@@ -88,13 +88,13 @@ const UserEvents = ({ events, loading, getUserEvents, userUid }) => {
 					{loading ? (
 						<CircularProgress color="secondary" />
 					) : (
-						<Grid container justify="center" alignItems="stretch" spacing={2}>
+						<Grid container justify="center" alignItems="center" spacing={2}>
 							{events.length !== 0 ? (
 								events.map(
 									(event) =>
 										typeof event.date.toDate === 'function' && (
-											<Grid key={event.id} item xs={12} sm={6}>
-												<UserEventItem event={event} />
+											<Grid key={event.id} item xs={12} sm={4}>
+												<EventItem event={event} />
 											</Grid>
 										)
 								)
@@ -117,6 +117,8 @@ const mapStateToProps = (state) => {
 	return {
 		events: state.events.events,
 		loading: state.async.loading,
+		auth: state.firebase.auth,
+		requesting: state.firestore.status.requesting,
 	};
 };
 

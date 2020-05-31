@@ -7,14 +7,14 @@ import { modalReducer } from './modals/modal.reducer';
 import { authReducer } from './auth/auth.reducer';
 import { firebaseReducer } from 'react-redux-firebase';
 import { firestoreReducer } from 'redux-firestore';
-import { favoriteItemReducer } from './favorite/favorite.reducer';
+import { favoritesReducer } from './favorite/favorite.reducer';
 import { asyncReducer } from './async/async.reducer';
 import { eventsReducer } from './events/events.reducer';
 
 const persistConfig = {
 	key: 'root',
 	storage,
-	whiteList: ['favorite'],
+	//whiteList: ['favorites'],
 };
 
 const rootReducer = combineReducers({
@@ -24,7 +24,7 @@ const rootReducer = combineReducers({
 	modal: modalReducer,
 	auth: authReducer,
 	toastr: ToastrReducer,
-	favorite: favoriteItemReducer,
+	favorites: favoritesReducer,
 	async: asyncReducer,
 	events: eventsReducer,
 });

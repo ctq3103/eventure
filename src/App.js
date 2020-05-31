@@ -13,6 +13,8 @@ import EventForm from './components/Events/EventForm';
 import SettingPage from './pages/Users/SettingPage';
 import EventImageUpload from './components/Events/EventDetails/ImageProcessing/EventImageUpload';
 import ProfilePage from './pages/Users/ProfilePage';
+import { UserIsAuthenticated } from './redux/auth/auth.wrapper';
+import SignInForm from './components/auth/SignInForm';
 
 const theme = createMuiTheme({
 	palette: {
@@ -42,17 +44,35 @@ const App = ({ location }) => {
 			<Switch key={location.key}>
 				<Route exact path="/" component={Homepage} />
 				<Route exact path="/category/:category" component={EventCategory} />
+				<Route exact path="/events" component={BrowseEvents} />
+				<Route exact path="/event/:id" component={EventDetailPage} />
+				<Route exact path="/signin" component={SignInForm} />
+
 				<Route
 					exact
 					path={['/createEvent', '/manage/:id']}
-					component={EventForm}
+					component={UserIsAuthenticated(EventForm)}
 				/>
-				<Route exact path="/events" component={BrowseEvents} />
-				<Route exact path="/event/:id" component={EventDetailPage} />
-				<Route exact path="/eventImage/:id" component={EventImageUpload} />
-				<Route exact path="/favorites" component={FavoriteEvents} />
-				<Route exact path="/settings" component={SettingPage} />
-				<Route exact path="/profile/:id" component={ProfilePage} />
+				<Route
+					exact
+					path="/eventImage/:id"
+					component={UserIsAuthenticated(EventImageUpload)}
+				/>
+				<Route
+					exact
+					path="/favorites"
+					component={UserIsAuthenticated(FavoriteEvents)}
+				/>
+				<Route
+					exact
+					path="/settings"
+					component={UserIsAuthenticated(SettingPage)}
+				/>
+				<Route
+					exact
+					path="/profile/:id"
+					component={UserIsAuthenticated(ProfilePage)}
+				/>
 			</Switch>
 		</ThemeProvider>
 	);
