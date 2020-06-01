@@ -15,15 +15,17 @@ import {
 	emailSignInStart,
 	socialSignInStart,
 } from '../../redux/auth/auth.actions';
-import { Grid, Divider } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { combineValidators, isRequired } from 'revalidate';
 import { indigo, red } from '@material-ui/core/colors';
 import SocialSignInForm from './SocialSignInForm';
 import { selectAuthError } from '../../redux/auth/auth.selectors';
+import { openModal } from '../../redux/modals/modal.actions';
 
 const mapDispatchToProps = {
 	emailSignInStart,
 	socialSignInStart,
+	openModal,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -79,6 +81,7 @@ function SignInForm({
 	authError,
 	invalid,
 	submitting,
+	openModal,
 }) {
 	const classes = useStyles();
 
@@ -136,7 +139,6 @@ function SignInForm({
 						Sign In
 					</Button>
 				</form>
-				<Divider variant="middle" />
 				<SocialSignInForm socialSignInStart={socialSignInStart} />
 			</div>
 		</Container>

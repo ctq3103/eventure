@@ -15,6 +15,7 @@ import EventImageUpload from './components/Events/EventDetails/ImageProcessing/E
 import ProfilePage from './pages/Users/ProfilePage';
 import { UserIsAuthenticated } from './redux/auth/auth.wrapper';
 import SignInForm from './components/auth/SignInForm';
+import NotFound from './pages/NotFound';
 
 const theme = createMuiTheme({
 	palette: {
@@ -73,6 +74,7 @@ const App = ({ location }) => {
 					path="/profile/:id"
 					component={UserIsAuthenticated(ProfilePage)}
 				/>
+				<Route component={NotFound} />
 			</Switch>
 		</ThemeProvider>
 	);

@@ -81,6 +81,7 @@ const EventDetailInfo = ({
 		creatorUid,
 		cancelled,
 	} = event;
+
 	return (
 		<div className={classes.root}>
 			<Paper elevation={3} className={classes.paper}>

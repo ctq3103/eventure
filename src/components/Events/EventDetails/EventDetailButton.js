@@ -11,7 +11,6 @@ const EventDetailButton = ({
 	cancelJoinEvent,
 	authenticated,
 	openModal,
-	dispatch,
 }) => {
 	const { cancelled } = event;
 

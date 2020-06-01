@@ -10,13 +10,18 @@ import {
 } from '../../redux/favorite/favorite.actions';
 import { objectToArray } from '../../utils/helpers';
 import Loading from '../../components/Loading';
+import NotFound from '../NotFound';
 import { openModal } from '../../redux/modals/modal.actions';
 
 class EventDetailPage extends Component {
 	componentDidMount() {
 		const { firestore, match, auth, getUserFavorites } = this.props;
 		firestore.setListener(`events/${match.params.id}`);
-		getUserFavorites(auth.uid);
+		if (!auth.uid) {
+			return;
+		} else {
+			getUserFavorites(auth.uid);
+		}
 	}
 
 	componentWillUnmount() {
@@ -35,12 +40,13 @@ class EventDetailPage extends Component {
 			removeFromFavorites,
 			requesting,
 			openModal,
-			dispatch,
 		} = this.props;
 
 		const loading = Object.values(requesting).some((item) => item === true);
 
 		if (!isLoaded(events) || !isLoaded(auth) || loading) return <Loading />;
+
+		if (Object.keys(event).length === 0) return <NotFound />;
 
 		const attendees =
 			event && event.attendees && objectToArray(event.attendees);
@@ -67,7 +73,6 @@ class EventDetailPage extends Component {
 				isInFavorites={isInFavorites}
 				authenticated={authenticated}
 				openModal={openModal}
-				dispatch={dispatch}
 			/>
 		);
 	}

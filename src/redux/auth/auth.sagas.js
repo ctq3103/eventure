@@ -20,7 +20,7 @@ import {
 } from './auth.actions';
 import history from '../../history';
 
-function* signInWithEmail({ payload: { email, password } }) {
+export function* signInWithEmail({ payload: { email, password } }) {
 	try {
 		const user = yield auth.signInWithEmailAndPassword(email, password);
 		yield put(signInSuccess(user));
@@ -30,7 +30,7 @@ function* signInWithEmail({ payload: { email, password } }) {
 	}
 }
 
-function* onEmailSignInStart() {
+export function* onEmailSignInStart() {
 	yield takeLatest(EMAIL_SIGN_IN_START, signInWithEmail);
 }
 

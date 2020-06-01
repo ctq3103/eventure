@@ -7,7 +7,11 @@ import { getUserFavorites } from '../../redux/favorite/favorite.actions';
 class FavoriteIconNav extends React.Component {
 	componentDidMount() {
 		const { getUserFavorites, auth } = this.props;
-		getUserFavorites(auth.uid);
+		if (!auth.uid) {
+			return;
+		} else {
+			getUserFavorites(auth.uid);
+		}
 	}
 
 	render() {
